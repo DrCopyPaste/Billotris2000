@@ -8,13 +8,15 @@ The plan for this is the following:
 
 - get the original code and game from 2006 (i saw 3 different versions, lets see how I would release those)
 - setup to be able to build it with a current IDE
+- setup project management and issues
 - change identifiers and indentation etc. to be consistent
+- maybe change default background/ bricks and preview
 - sort methods and classes into separate files
 - now look on how to improve readability further and simplify code
+- add captions for numbers ingame (which score is which where is level display?)
 - try upgrading to a current sdl version (2006 version uses  1.2)
 - add game mode selection screen and highscore table
 - try using real fonts instead of bmp-fonts
 - work out bugs (like rotation movement)
-- setup project management and issues
 - sounds?
 - setup cross platform builds (azure integration?)
