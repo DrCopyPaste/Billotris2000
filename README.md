@@ -13,3 +13,8 @@ The plan for this is the following:
 - now look on how to improve readability further and simplify code
 - try upgrading to a current sdl version (2006 version uses  1.2)
 - add game mode selection screen and highscore table
+- try using real fonts instead of bmp-fonts
+- work out bugs (like rotation movement)
+- setup project management and issues
+- sounds?
+- setup cross platform builds (azure integration?)
