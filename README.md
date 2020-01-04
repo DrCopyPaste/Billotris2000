@@ -54,3 +54,8 @@ clean new sdl project (following https://www.youtube.com/watch?v=MHbLQq47Gdw)
 - using https://www.libsdl.org/release/SDL2-devel-2.0.10-VC.zip
 - i just added one simple main.cpp with SDL initialization code in it
 - AND IT BUILDS! nice, now I am just saving this minimal example to this repository and try to "superimpose" my old tetris code on top of that
+
+## 2020-01-04 12:21
+
+I dumped the original code and bmp-sources under original_sources (for anyone still trying to get this to work with SDL 1.2)
+Now I am trying to migrate that code with as little changes as possible to work under SDL2.
