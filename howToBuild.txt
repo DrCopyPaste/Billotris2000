@@ -1,7 +1,9 @@
 currently no extra batch file for you ;/
 
-BUT it should be easy enough to build using
+BUT it should be easy enough to build
 
-Microsoft Visual Studio Community 2019
+on Windows
+using Microsoft Visual Studio Community 2019
 (https://visualstudio.microsoft.com/vs/)
 
+be sure to have C++ workloads installed via Visual Studio Installer

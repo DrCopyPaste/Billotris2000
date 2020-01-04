@@ -1,1 +1,4 @@
 /Billotris2000.Win32Client/Billotris2000.Win32Client.vcxproj.user
+Debug
+.vs
+/SDL2Client/*.user
