@@ -86,168 +86,209 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="0.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\0.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="1.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\1.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="2.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\2.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="3.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\3.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="4.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\4.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="5.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\5.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="6.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\6.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="7.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\7.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="8.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\8.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="9.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\9.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="A.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\A.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="B.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\B.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="C.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\C.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="D.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\D.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="E.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\E.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="F.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\F.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="G.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\G.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="gameover.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\gameover.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="H.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\H.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="I.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\I.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="J.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\J.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="K.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\K.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="klotz.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\klotz.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="L.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\L.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="M.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\M.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="N.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\N.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="O.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\O.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="P.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\P.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Q.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\Q.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="R.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\R.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="rand.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\rand.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="S.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\S.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="spielgrund.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\spielgrund.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="T.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\T.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="U.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\U.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="V.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\V.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="vorschau.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\vorschau.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="W.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\W.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="X.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\X.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Y.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\Y.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Z.bmp">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
+    <CopyFileToFolders Include="images\Z.bmp">
+      <DestinationFolders>$(OutDir)images</DestinationFolders>
+	  <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</DeploymentContent>
     </CopyFileToFolders>
   </ItemGroup>

@@ -1395,10 +1395,10 @@ int main()
 	Uint32 last_lr;
 	Uint32 lastpause;
 
-	cout << "Name?!?" << endl;
-	cin >> name;
+	//cout << "Name?!?" << endl;
+	//cin >> name;
 
-	anzeige_name = "";
+	//anzeige_name = "";
 
 
 
@@ -1436,85 +1436,85 @@ int main()
 		exit(1);
 	}
 
-	hintergrund = LoadBMP("rand.bmp");
-	leerhintergrund = LoadBMP("rand.bmp");
-	klotzquelle = LoadBMP("klotz.bmp");
-	spielgrund = LoadBMP("spielgrund.bmp");
-	leergrund = LoadBMP("spielgrund.bmp");
-	vorschaugrund = LoadBMP("vorschau.bmp");
-	vorschauleer = LoadBMP("vorschau.bmp");
-	gameover = LoadBMP("gameover.bmp");
-	A = LoadBMP("A.BMP");
+	hintergrund = LoadBMP("images\\rand.bmp");
+	leerhintergrund = LoadBMP("images\\rand.bmp");
+	klotzquelle = LoadBMP("images\\klotz.bmp");
+	spielgrund = LoadBMP("images\\spielgrund.bmp");
+	leergrund = LoadBMP("images\\spielgrund.bmp");
+	vorschaugrund = LoadBMP("images\\vorschau.bmp");
+	vorschauleer = LoadBMP("images\\vorschau.bmp");
+	gameover = LoadBMP("images\\gameover.bmp");
+	A = LoadBMP("images\\A.BMP");
 	SDL_SetColorKey(A, SDL_TRUE, SDL_MapRGB(A->format, 0, 0, 0));
-	B = LoadBMP("B.BMP");
+	B = LoadBMP("images\\B.BMP");
 	SDL_SetColorKey(B, SDL_TRUE, SDL_MapRGB(B->format, 0, 0, 0));
-	C = LoadBMP("C.BMP");
+	C = LoadBMP("images\\C.BMP");
 	SDL_SetColorKey(C, SDL_TRUE, SDL_MapRGB(C->format, 0, 0, 0));
-	D = LoadBMP("D.BMP");
+	D = LoadBMP("images\\D.BMP");
 	SDL_SetColorKey(D, SDL_TRUE, SDL_MapRGB(D->format, 0, 0, 0));
-	E = LoadBMP("E.BMP");
+	E = LoadBMP("images\\E.BMP");
 	SDL_SetColorKey(E, SDL_TRUE, SDL_MapRGB(E->format, 0, 0, 0));
-	F = LoadBMP("F.BMP");
+	F = LoadBMP("images\\F.BMP");
 	SDL_SetColorKey(F, SDL_TRUE, SDL_MapRGB(F->format, 0, 0, 0));
-	G = LoadBMP("G.BMP");
+	G = LoadBMP("images\\G.BMP");
 	SDL_SetColorKey(G, SDL_TRUE, SDL_MapRGB(G->format, 0, 0, 0));
-	H = LoadBMP("H.BMP");
+	H = LoadBMP("images\\H.BMP");
 	SDL_SetColorKey(H, SDL_TRUE, SDL_MapRGB(H->format, 0, 0, 0));
-	I = LoadBMP("I.BMP");
+	I = LoadBMP("images\\I.BMP");
 	SDL_SetColorKey(I, SDL_TRUE, SDL_MapRGB(I->format, 0, 0, 0));
-	J = LoadBMP("J.BMP");
+	J = LoadBMP("images\\J.BMP");
 	SDL_SetColorKey(J, SDL_TRUE, SDL_MapRGB(J->format, 0, 0, 0));
-	K = LoadBMP("K.BMP");
+	K = LoadBMP("images\\K.BMP");
 	SDL_SetColorKey(K, SDL_TRUE, SDL_MapRGB(K->format, 0, 0, 0));
-	L = LoadBMP("L.BMP");
+	L = LoadBMP("images\\L.BMP");
 	SDL_SetColorKey(L, SDL_TRUE, SDL_MapRGB(L->format, 0, 0, 0));
-	M = LoadBMP("M.BMP");
+	M = LoadBMP("images\\M.BMP");
 	SDL_SetColorKey(M, SDL_TRUE, SDL_MapRGB(M->format, 0, 0, 0));
-	N = LoadBMP("N.BMP");
+	N = LoadBMP("images\\N.BMP");
 	SDL_SetColorKey(N, SDL_TRUE, SDL_MapRGB(N->format, 0, 0, 0));
-	O = LoadBMP("O.BMP");
+	O = LoadBMP("images\\O.BMP");
 	SDL_SetColorKey(O, SDL_TRUE, SDL_MapRGB(O->format, 0, 0, 0));
-	P = LoadBMP("P.BMP");
+	P = LoadBMP("images\\P.BMP");
 	SDL_SetColorKey(P, SDL_TRUE, SDL_MapRGB(P->format, 0, 0, 0));
-	Q = LoadBMP("Q.BMP");
+	Q = LoadBMP("images\\Q.BMP");
 	SDL_SetColorKey(Q, SDL_TRUE, SDL_MapRGB(Q->format, 0, 0, 0));
-	R = LoadBMP("R.BMP");
+	R = LoadBMP("images\\R.BMP");
 	SDL_SetColorKey(R, SDL_TRUE, SDL_MapRGB(R->format, 0, 0, 0));
-	S = LoadBMP("S.BMP");
+	S = LoadBMP("images\\S.BMP");
 	SDL_SetColorKey(S, SDL_TRUE, SDL_MapRGB(S->format, 0, 0, 0));
-	T = LoadBMP("T.BMP");
+	T = LoadBMP("images\\T.BMP");
 	SDL_SetColorKey(T, SDL_TRUE, SDL_MapRGB(T->format, 0, 0, 0));
-	U = LoadBMP("U.BMP");
+	U = LoadBMP("images\\U.BMP");
 	SDL_SetColorKey(U, SDL_TRUE, SDL_MapRGB(U->format, 0, 0, 0));
-	V = LoadBMP("V.BMP");
+	V = LoadBMP("images\\V.BMP");
 	SDL_SetColorKey(V, SDL_TRUE, SDL_MapRGB(V->format, 0, 0, 0));
-	W = LoadBMP("W.BMP");
+	W = LoadBMP("images\\W.BMP");
 	SDL_SetColorKey(W, SDL_TRUE, SDL_MapRGB(W->format, 0, 0, 0));
-	X = LoadBMP("X.BMP");
+	X = LoadBMP("images\\X.BMP");
 	SDL_SetColorKey(X, SDL_TRUE, SDL_MapRGB(X->format, 0, 0, 0));
-	Y = LoadBMP("Y.BMP");
+	Y = LoadBMP("images\\Y.BMP");
 	SDL_SetColorKey(Y, SDL_TRUE, SDL_MapRGB(Y->format, 0, 0, 0));
-	Z = LoadBMP("Z.BMP");
+	Z = LoadBMP("images\\Z.BMP");
 	SDL_SetColorKey(Z, SDL_TRUE, SDL_MapRGB(Z->format, 0, 0, 0));
-	eins = LoadBMP("1.BMP");
+	eins = LoadBMP("images\\1.BMP");
 	SDL_SetColorKey(eins, SDL_TRUE, SDL_MapRGB(eins->format, 0, 0, 0));
-	zwei = LoadBMP("2.BMP");
+	zwei = LoadBMP("images\\2.BMP");
 	SDL_SetColorKey(zwei, SDL_TRUE, SDL_MapRGB(zwei->format, 0, 0, 0));
-	drei = LoadBMP("3.BMP");
+	drei = LoadBMP("images\\3.BMP");
 	SDL_SetColorKey(drei, SDL_TRUE, SDL_MapRGB(drei->format, 0, 0, 0));
-	vier = LoadBMP("4.BMP");
+	vier = LoadBMP("images\\4.BMP");
 	SDL_SetColorKey(vier, SDL_TRUE, SDL_MapRGB(vier->format, 0, 0, 0));
-	fuenf = LoadBMP("5.BMP");
+	fuenf = LoadBMP("images\\5.BMP");
 	SDL_SetColorKey(fuenf, SDL_TRUE, SDL_MapRGB(fuenf->format, 0, 0, 0));
-	sechs = LoadBMP("6.BMP");
+	sechs = LoadBMP("images\\6.BMP");
 	SDL_SetColorKey(sechs, SDL_TRUE, SDL_MapRGB(sechs->format, 0, 0, 0));
-	sieben = LoadBMP("7.BMP");
+	sieben = LoadBMP("images\\7.BMP");
 	SDL_SetColorKey(sieben, SDL_TRUE, SDL_MapRGB(sieben->format, 0, 0, 0));
-	acht = LoadBMP("8.BMP");
+	acht = LoadBMP("images\\8.BMP");
 	SDL_SetColorKey(acht, SDL_TRUE, SDL_MapRGB(acht->format, 0, 0, 0));
-	neun = LoadBMP("9.BMP");
+	neun = LoadBMP("images\\9.BMP");
 	SDL_SetColorKey(neun, SDL_TRUE, SDL_MapRGB(neun->format, 0, 0, 0));
-	null = LoadBMP("0.BMP");
+	null = LoadBMP("images\\0.BMP");
 	SDL_SetColorKey(null, SDL_TRUE, SDL_MapRGB(null->format, 0, 0, 0));
 
 	//SDL_SetColorKey(hintergrund, SDL_SRCCOLORKEY, g_Black);
@@ -1673,11 +1673,11 @@ int main()
 	SDL_FreeSurface(acht);
 	SDL_FreeSurface(neun);
 
-	ofstream highscore("highscore.txt", ios::app | ios::binary);
+	//ofstream highscore("highscore.txt", ios::app | ios::binary);
 
-	highscore << punkte << " " << name << " " << abgebaut << " " << steine << endl;
+	//highscore << punkte << " " << name << " " << abgebaut << " " << steine << endl;
 
-	highscore.close();
+	//highscore.close();
 
 	return 0;
 
