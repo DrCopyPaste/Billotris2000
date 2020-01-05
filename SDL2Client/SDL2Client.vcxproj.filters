@@ -13,10 +13,138 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="images">
+      <UniqueIdentifier>{e44d25a7-8fbb-45fc-a184-37d8de160fad}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="0.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="1.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="2.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="3.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="4.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="5.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="6.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="7.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="8.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="9.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="A.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="B.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="C.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="D.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="E.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="F.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="G.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="gameover.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="H.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="I.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="J.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="K.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="klotz.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="L.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="M.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="N.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="O.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="P.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Q.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="R.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="rand.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="S.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="spielgrund.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="T.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="U.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="V.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="vorschau.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="W.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="X.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Y.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="Z.bmp">
+      <Filter>images</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>

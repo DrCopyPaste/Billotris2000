@@ -59,3 +59,21 @@ clean new sdl project (following https://www.youtube.com/watch?v=MHbLQq47Gdw)
 
 I dumped the original code and bmp-sources under original_sources (for anyone still trying to get this to work with SDL 1.2)
 Now I am trying to migrate that code with as little changes as possible to work under SDL2.
+
+## 2020-01-05 16:56
+- I didn't get as many errors as I expected, seems only a few things critical to me have changed:
+- SDL_SetVideoMode
+- SDL_UpdateRect
+- SDL_GetKeyState
+- SDL_SRCCOLORKEY
+
+So using migration guide from https://wiki.libsdl.org/MigrationGuide
+- added window variable because screen itself is not a surface anymore
+- blitting is still done against all those surfaces and then blitted on top of screen surface
+(but then a new screenTexture is updated from that screen surface and the screenTexture is then used to render the screen)
+- pass SDL_TRUE instead of SDL_SRCCOLORKEY
+- SDL_GetKeyState renamed to SDL_GetKeyboardState
+- now need a rendering context
+- instead of SDL_UpdateRect/SDL_Flip use SDL_RenderPresent
+- and changing back system to console, because that is what is currently used by this code
+- it not actually builds and the game it produces looks pretty familiar to me :D

@@ -8,11 +8,6 @@
 
 #include "SDL.h"
 
-// not sure if these are needed (helped with some errors when using SDL1 but since this is now SDL2 and it seems to build fine without these...?)
-//#define stdin  (&__iob_func()[0])
-//#define stdout (&__iob_func()[1])
-//#define stderr (&__iob_func()[2])
-
 using namespace std;
 
 #ifdef _WIN32
@@ -28,7 +23,10 @@ void update_oklotz();
 int running;
 
 SDL_Surface* screen;
+SDL_Texture* screenTexture;
 
+SDL_Window* window;
+SDL_Renderer* renderer;
 SDL_Surface* hintergrund;
 
 SDL_Surface* leerhintergrund;
@@ -110,7 +108,7 @@ void outzahlxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, u
 	unsigned long rest = 1;
 	unsigned long divisor = 1000000000;		//beginne mit einer milliarde (größte ulong ~4,5mrd)
 
-	SDL_Surface* tmp;
+	SDL_Surface* tmp = null;
 
 	int	fuehrungsnull = 1;
 	int nixmachen = 0;
@@ -490,8 +488,9 @@ void outtextxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, s
 
 	};
 
-	SDL_UpdateRect(surface, startx, starty, ziel.x, (starty + 30));
-
+	// only partial update here? shouldnt this behave similarly to outzahlxy?
+	// seems unused right now anyways, probably preparation to display hiscore names etc
+	//SDL_UpdateRect(surface, startx, starty, ziel.x, (starty + 30));
 
 };
 
@@ -616,7 +615,7 @@ void voll() {	//prüft bei auftreffen des steins auf vollständige reihen
 
 				update_kloetze();
 
-				SDL_UpdateRect(screen, 0, 0, 0, 0);
+				SDL_RenderPresent(renderer);
 
 				if (zusammenfall == 1) {
 
@@ -638,7 +637,7 @@ void voll() {	//prüft bei auftreffen des steins auf vollständige reihen
 
 					update_kloetze();
 
-					SDL_UpdateRect(screen, 0, 0, 0, 0);
+					SDL_RenderPresent(renderer);
 				};
 
 			};
@@ -676,7 +675,11 @@ void ende() {
 
 	SDL_BlitSurface(spielgrund, &quelle, screen, &ziel);
 
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
+	SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
+
+	SDL_RenderPresent(renderer);
 
 	SDL_Delay(3000);
 
@@ -1140,6 +1143,9 @@ void update_kloetze() {
 
 	SDL_BlitSurface(spielgrund, &quelle, screen, &ziel);
 
+	SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
 
 
 };
@@ -1237,9 +1243,11 @@ void zeichne_hintergrund() {
 
 	SDL_BlitSurface(leerhintergrund, &quelle, screen, &ziel);
 
-
 	//SDL_UpdateRect(
 
+	SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
+	SDL_RenderClear(renderer);
+	SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
 
 
 };
@@ -1402,8 +1410,27 @@ int main()
 
 	atexit(SDL_Quit);
 
-	screen = SDL_SetVideoMode(640, 480, 0, 0);
-	if (!screen) {
+	SDL_CreateWindowAndRenderer(
+		640,
+		480,
+		SDL_WINDOW_BORDERLESS,
+		&window,
+		&renderer);
+
+	SDL_RenderClear(renderer);
+
+	screen = SDL_CreateRGBSurface(0, 640, 480, 32,
+		0x00FF0000,
+		0x0000FF00,
+		0x000000FF,
+		0xFF000000);
+
+	screenTexture = SDL_CreateTexture(renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		640, 480);
+
+	if (!window) {
 		fprintf(stderr, "Konnte Bildschirmmodus nicht setzen: %s\n",
 			SDL_GetError());
 		exit(1);
@@ -1418,77 +1445,77 @@ int main()
 	vorschauleer = LoadBMP("vorschau.bmp");
 	gameover = LoadBMP("gameover.bmp");
 	A = LoadBMP("A.BMP");
-	SDL_SetColorKey(A, SDL_SRCCOLORKEY, SDL_MapRGB(A->format, 0, 0, 0));
+	SDL_SetColorKey(A, SDL_TRUE, SDL_MapRGB(A->format, 0, 0, 0));
 	B = LoadBMP("B.BMP");
-	SDL_SetColorKey(B, SDL_SRCCOLORKEY, SDL_MapRGB(B->format, 0, 0, 0));
+	SDL_SetColorKey(B, SDL_TRUE, SDL_MapRGB(B->format, 0, 0, 0));
 	C = LoadBMP("C.BMP");
-	SDL_SetColorKey(C, SDL_SRCCOLORKEY, SDL_MapRGB(C->format, 0, 0, 0));
+	SDL_SetColorKey(C, SDL_TRUE, SDL_MapRGB(C->format, 0, 0, 0));
 	D = LoadBMP("D.BMP");
-	SDL_SetColorKey(D, SDL_SRCCOLORKEY, SDL_MapRGB(D->format, 0, 0, 0));
+	SDL_SetColorKey(D, SDL_TRUE, SDL_MapRGB(D->format, 0, 0, 0));
 	E = LoadBMP("E.BMP");
-	SDL_SetColorKey(E, SDL_SRCCOLORKEY, SDL_MapRGB(E->format, 0, 0, 0));
+	SDL_SetColorKey(E, SDL_TRUE, SDL_MapRGB(E->format, 0, 0, 0));
 	F = LoadBMP("F.BMP");
-	SDL_SetColorKey(F, SDL_SRCCOLORKEY, SDL_MapRGB(F->format, 0, 0, 0));
+	SDL_SetColorKey(F, SDL_TRUE, SDL_MapRGB(F->format, 0, 0, 0));
 	G = LoadBMP("G.BMP");
-	SDL_SetColorKey(G, SDL_SRCCOLORKEY, SDL_MapRGB(G->format, 0, 0, 0));
+	SDL_SetColorKey(G, SDL_TRUE, SDL_MapRGB(G->format, 0, 0, 0));
 	H = LoadBMP("H.BMP");
-	SDL_SetColorKey(H, SDL_SRCCOLORKEY, SDL_MapRGB(H->format, 0, 0, 0));
+	SDL_SetColorKey(H, SDL_TRUE, SDL_MapRGB(H->format, 0, 0, 0));
 	I = LoadBMP("I.BMP");
-	SDL_SetColorKey(I, SDL_SRCCOLORKEY, SDL_MapRGB(I->format, 0, 0, 0));
+	SDL_SetColorKey(I, SDL_TRUE, SDL_MapRGB(I->format, 0, 0, 0));
 	J = LoadBMP("J.BMP");
-	SDL_SetColorKey(J, SDL_SRCCOLORKEY, SDL_MapRGB(J->format, 0, 0, 0));
+	SDL_SetColorKey(J, SDL_TRUE, SDL_MapRGB(J->format, 0, 0, 0));
 	K = LoadBMP("K.BMP");
-	SDL_SetColorKey(K, SDL_SRCCOLORKEY, SDL_MapRGB(K->format, 0, 0, 0));
+	SDL_SetColorKey(K, SDL_TRUE, SDL_MapRGB(K->format, 0, 0, 0));
 	L = LoadBMP("L.BMP");
-	SDL_SetColorKey(L, SDL_SRCCOLORKEY, SDL_MapRGB(L->format, 0, 0, 0));
+	SDL_SetColorKey(L, SDL_TRUE, SDL_MapRGB(L->format, 0, 0, 0));
 	M = LoadBMP("M.BMP");
-	SDL_SetColorKey(M, SDL_SRCCOLORKEY, SDL_MapRGB(M->format, 0, 0, 0));
+	SDL_SetColorKey(M, SDL_TRUE, SDL_MapRGB(M->format, 0, 0, 0));
 	N = LoadBMP("N.BMP");
-	SDL_SetColorKey(N, SDL_SRCCOLORKEY, SDL_MapRGB(N->format, 0, 0, 0));
+	SDL_SetColorKey(N, SDL_TRUE, SDL_MapRGB(N->format, 0, 0, 0));
 	O = LoadBMP("O.BMP");
-	SDL_SetColorKey(O, SDL_SRCCOLORKEY, SDL_MapRGB(O->format, 0, 0, 0));
+	SDL_SetColorKey(O, SDL_TRUE, SDL_MapRGB(O->format, 0, 0, 0));
 	P = LoadBMP("P.BMP");
-	SDL_SetColorKey(P, SDL_SRCCOLORKEY, SDL_MapRGB(P->format, 0, 0, 0));
+	SDL_SetColorKey(P, SDL_TRUE, SDL_MapRGB(P->format, 0, 0, 0));
 	Q = LoadBMP("Q.BMP");
-	SDL_SetColorKey(Q, SDL_SRCCOLORKEY, SDL_MapRGB(Q->format, 0, 0, 0));
+	SDL_SetColorKey(Q, SDL_TRUE, SDL_MapRGB(Q->format, 0, 0, 0));
 	R = LoadBMP("R.BMP");
-	SDL_SetColorKey(R, SDL_SRCCOLORKEY, SDL_MapRGB(R->format, 0, 0, 0));
+	SDL_SetColorKey(R, SDL_TRUE, SDL_MapRGB(R->format, 0, 0, 0));
 	S = LoadBMP("S.BMP");
-	SDL_SetColorKey(S, SDL_SRCCOLORKEY, SDL_MapRGB(S->format, 0, 0, 0));
+	SDL_SetColorKey(S, SDL_TRUE, SDL_MapRGB(S->format, 0, 0, 0));
 	T = LoadBMP("T.BMP");
-	SDL_SetColorKey(T, SDL_SRCCOLORKEY, SDL_MapRGB(T->format, 0, 0, 0));
+	SDL_SetColorKey(T, SDL_TRUE, SDL_MapRGB(T->format, 0, 0, 0));
 	U = LoadBMP("U.BMP");
-	SDL_SetColorKey(U, SDL_SRCCOLORKEY, SDL_MapRGB(U->format, 0, 0, 0));
+	SDL_SetColorKey(U, SDL_TRUE, SDL_MapRGB(U->format, 0, 0, 0));
 	V = LoadBMP("V.BMP");
-	SDL_SetColorKey(V, SDL_SRCCOLORKEY, SDL_MapRGB(V->format, 0, 0, 0));
+	SDL_SetColorKey(V, SDL_TRUE, SDL_MapRGB(V->format, 0, 0, 0));
 	W = LoadBMP("W.BMP");
-	SDL_SetColorKey(W, SDL_SRCCOLORKEY, SDL_MapRGB(W->format, 0, 0, 0));
+	SDL_SetColorKey(W, SDL_TRUE, SDL_MapRGB(W->format, 0, 0, 0));
 	X = LoadBMP("X.BMP");
-	SDL_SetColorKey(X, SDL_SRCCOLORKEY, SDL_MapRGB(X->format, 0, 0, 0));
+	SDL_SetColorKey(X, SDL_TRUE, SDL_MapRGB(X->format, 0, 0, 0));
 	Y = LoadBMP("Y.BMP");
-	SDL_SetColorKey(Y, SDL_SRCCOLORKEY, SDL_MapRGB(Y->format, 0, 0, 0));
+	SDL_SetColorKey(Y, SDL_TRUE, SDL_MapRGB(Y->format, 0, 0, 0));
 	Z = LoadBMP("Z.BMP");
-	SDL_SetColorKey(Z, SDL_SRCCOLORKEY, SDL_MapRGB(Z->format, 0, 0, 0));
+	SDL_SetColorKey(Z, SDL_TRUE, SDL_MapRGB(Z->format, 0, 0, 0));
 	eins = LoadBMP("1.BMP");
-	SDL_SetColorKey(eins, SDL_SRCCOLORKEY, SDL_MapRGB(eins->format, 0, 0, 0));
+	SDL_SetColorKey(eins, SDL_TRUE, SDL_MapRGB(eins->format, 0, 0, 0));
 	zwei = LoadBMP("2.BMP");
-	SDL_SetColorKey(zwei, SDL_SRCCOLORKEY, SDL_MapRGB(zwei->format, 0, 0, 0));
+	SDL_SetColorKey(zwei, SDL_TRUE, SDL_MapRGB(zwei->format, 0, 0, 0));
 	drei = LoadBMP("3.BMP");
-	SDL_SetColorKey(drei, SDL_SRCCOLORKEY, SDL_MapRGB(drei->format, 0, 0, 0));
+	SDL_SetColorKey(drei, SDL_TRUE, SDL_MapRGB(drei->format, 0, 0, 0));
 	vier = LoadBMP("4.BMP");
-	SDL_SetColorKey(vier, SDL_SRCCOLORKEY, SDL_MapRGB(vier->format, 0, 0, 0));
+	SDL_SetColorKey(vier, SDL_TRUE, SDL_MapRGB(vier->format, 0, 0, 0));
 	fuenf = LoadBMP("5.BMP");
-	SDL_SetColorKey(fuenf, SDL_SRCCOLORKEY, SDL_MapRGB(fuenf->format, 0, 0, 0));
+	SDL_SetColorKey(fuenf, SDL_TRUE, SDL_MapRGB(fuenf->format, 0, 0, 0));
 	sechs = LoadBMP("6.BMP");
-	SDL_SetColorKey(sechs, SDL_SRCCOLORKEY, SDL_MapRGB(sechs->format, 0, 0, 0));
+	SDL_SetColorKey(sechs, SDL_TRUE, SDL_MapRGB(sechs->format, 0, 0, 0));
 	sieben = LoadBMP("7.BMP");
-	SDL_SetColorKey(sieben, SDL_SRCCOLORKEY, SDL_MapRGB(sieben->format, 0, 0, 0));
+	SDL_SetColorKey(sieben, SDL_TRUE, SDL_MapRGB(sieben->format, 0, 0, 0));
 	acht = LoadBMP("8.BMP");
-	SDL_SetColorKey(acht, SDL_SRCCOLORKEY, SDL_MapRGB(acht->format, 0, 0, 0));
+	SDL_SetColorKey(acht, SDL_TRUE, SDL_MapRGB(acht->format, 0, 0, 0));
 	neun = LoadBMP("9.BMP");
-	SDL_SetColorKey(neun, SDL_SRCCOLORKEY, SDL_MapRGB(neun->format, 0, 0, 0));
+	SDL_SetColorKey(neun, SDL_TRUE, SDL_MapRGB(neun->format, 0, 0, 0));
 	null = LoadBMP("0.BMP");
-	SDL_SetColorKey(null, SDL_SRCCOLORKEY, SDL_MapRGB(null->format, 0, 0, 0));
+	SDL_SetColorKey(null, SDL_TRUE, SDL_MapRGB(null->format, 0, 0, 0));
 
 	//SDL_SetColorKey(hintergrund, SDL_SRCCOLORKEY, g_Black);
 
@@ -1501,7 +1528,7 @@ int main()
 
 	zeichne_hintergrund();
 	update_kloetze();
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
+	SDL_RenderPresent(renderer);
 
 	running = 1;
 	curframe = SDL_GetTicks();
@@ -1518,7 +1545,7 @@ int main()
 
 	while (running) {
 		SDL_Event event;
-		Uint8* keystate;
+		const Uint8* keystate;
 
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -1546,23 +1573,23 @@ int main()
 			}
 		}
 
-		keystate = SDL_GetKeyState(0);
+		keystate = SDL_GetKeyboardState(0);
 
-		if (keystate[SDLK_LEFT]) {
+		if (keystate[SDL_SCANCODE_LEFT]) {
 			if ((last_lr + linksrechtsverz) < curframe) {
 				links_bewegen();
 				last_lr = curframe;
 			};
 		};
-		if (keystate[SDLK_RIGHT]) {
+		if (keystate[SDL_SCANCODE_RIGHT]) {
 			if ((last_lr + linksrechtsverz) < curframe) {
 				rechts_bewegen();
 				last_lr = curframe;
 			};
 		};
-		if (keystate[SDLK_DOWN])	unten_bewegen();
+		if (keystate[SDL_SCANCODE_DOWN])	unten_bewegen();
 
-		if (keystate[SDLK_RETURN]) {
+		if (keystate[SDL_SCANCODE_RETURN]) {
 
 			if ((lastpause + 1000) < curframe) {
 
@@ -1595,7 +1622,7 @@ int main()
 
 		update_kloetze();
 
-		SDL_UpdateRect(screen, 0, 0, 0, 0);
+		SDL_RenderPresent(renderer);
 
 
 	}
@@ -1608,7 +1635,6 @@ int main()
 	SDL_FreeSurface(gameover);
 	SDL_FreeSurface(vorschaugrund);
 	SDL_FreeSurface(vorschauleer);
-
 	SDL_FreeSurface(A);
 	SDL_FreeSurface(B);
 	SDL_FreeSurface(C);
