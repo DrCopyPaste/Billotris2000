@@ -23,128 +23,129 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="0.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\0.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="1.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\1.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="2.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\2.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="3.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\3.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="4.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\4.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="5.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\5.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="6.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\6.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="7.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\7.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="8.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\8.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="9.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\9.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="A.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\A.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="B.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\B.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="C.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\C.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="D.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\D.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="E.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\E.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="F.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\F.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="G.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\G.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="gameover.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\gameover.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="H.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\H.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="I.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\I.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="J.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\J.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="K.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\K.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="klotz.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\klotz.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="L.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\L.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="M.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\M.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="N.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\N.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="O.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\O.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="P.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\P.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Q.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\Q.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="R.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\R.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="rand.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\rand.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="S.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\S.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="spielgrund.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\spielgrund.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="T.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\T.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="U.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\U.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="V.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\V.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="vorschau.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\vorschau.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="W.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\W.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="X.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\X.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Y.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\Y.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="Z.bmp">
-      <Filter>images</Filter>
+    <CopyFileToFolders Include="images\Z.bmp">
+      <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="SDL2-2.0.10\lib\x86\SDL2.dll" />
   </ItemGroup>
 </Project>

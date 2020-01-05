@@ -77,3 +77,9 @@ So using migration guide from https://wiki.libsdl.org/MigrationGuide
 - instead of SDL_UpdateRect/SDL_Flip use SDL_RenderPresent
 - and changing back system to console, because that is what is currently used by this code
 - it not actually builds and the game it produces looks pretty familiar to me :D
+
+## 2020-01-05 18:44
+- moved images to subfolder
+- include SDL2.dll into build output folder
+- changed code generation ("msvcp140.dll missing" on other machines error)
+- SDL2Client now should build right after checkout and be usable without manually copying the dll files over
