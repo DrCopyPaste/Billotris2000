@@ -83,3 +83,9 @@ So using migration guide from https://wiki.libsdl.org/MigrationGuide
 - include SDL2.dll into build output folder
 - changed code generation ("msvcp140.dll missing" on other machines error)
 - SDL2Client now should build right after checkout and be usable without manually copying the dll files over
+
+## 2020-01-07 00:51
+Now that the project is building again I can finally try to make it more readable.
+There is a lot of dead code though (at least in the comments) and I'll be leaving that in for now...
+
+First I am just adding some indentation and try having a somewhat consistent style of using braces and semicolons...
