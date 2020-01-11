@@ -1,6 +1,13 @@
 # Billotris2000
 A maybe futile attempt to salvage a thirteen year old throw away tetris clone.
 
+# Controls
+[<-] moves brick left
+[->] moves brick right
+[Down] moves brick down faster
+[Up] lets brick fall to ground 
+[Ctrl-Right] rotates brick (counter clockwise)
+
 ## 2019-12-28 12:15
 I just recently rediscovered my old code for this cheap tetris clone from 2006.
 The exe files that I have still run, though I have not yet tried to get the IDE running for playing with the source code.

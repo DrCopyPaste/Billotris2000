@@ -5,7 +5,6 @@
 #include <fstream>
 #include <string>
 
-
 #include "SDL.h"
 
 using namespace std;
@@ -14,188 +13,184 @@ using namespace std;
 #undef main
 #endif
 
-//vorausdefinitionen...
+// make method signature known
+void UpdateBricks();
 
-void update_kloetze();
-void update_oklotz();
+int Running;
 
-int running;
+SDL_Surface* Screen;
+SDL_Texture* ScreenTexture;
 
-SDL_Surface* screen;
-SDL_Texture* screenTexture;
+SDL_Window* Window;
+SDL_Renderer* Renderer;
 
-SDL_Window* window;
-SDL_Renderer* renderer;
+SDL_Surface* Background;
+SDL_Surface* Background_empty;
+SDL_Surface* BrickSource;
+SDL_Surface* PlayGround;
+SDL_Surface* PreviewGround;
+SDL_Surface* PlayGround_empty;
+SDL_Surface* GameOver;
+SDL_Surface* PreviewGround_empty;
 
-SDL_Surface* hintergrund;
-SDL_Surface* leerhintergrund;
-SDL_Surface* klotzquelle;
-SDL_Surface* spielgrund;
-SDL_Surface* vorschaugrund;
-SDL_Surface* leergrund;
-SDL_Surface* gameover;
-SDL_Surface* vorschauleer;
+SDL_Surface* LetterA;
+SDL_Surface* LetterB;
+SDL_Surface* LetterC;
+SDL_Surface* LetterD;
+SDL_Surface* LetterE;
+SDL_Surface* LetterF;
+SDL_Surface* LetterG;
+SDL_Surface* LetterH;
+SDL_Surface* LetterI;
+SDL_Surface* LetterJ;
+SDL_Surface* LetterK;
+SDL_Surface* LetterL;
+SDL_Surface* LetterM;
+SDL_Surface* LetterN;
+SDL_Surface* LetterO;
+SDL_Surface* LetterP;
+SDL_Surface* LetterQ;
+SDL_Surface* LetterR;
+SDL_Surface* LetterS;
+SDL_Surface* LetterT;
+SDL_Surface* LetterU;
+SDL_Surface* LetterV;
+SDL_Surface* LetterW;
+SDL_Surface* LetterX;
+SDL_Surface* LetterY;
+SDL_Surface* LetterZ;
 
-SDL_Surface* A;
-SDL_Surface* B;
-SDL_Surface* C;
-SDL_Surface* D;
-SDL_Surface* E;
-SDL_Surface* F;
-SDL_Surface* G;
-SDL_Surface* H;
-SDL_Surface* I;
-SDL_Surface* J;
-SDL_Surface* K;
-SDL_Surface* L;
-SDL_Surface* M;
-SDL_Surface* N;
-SDL_Surface* O;
-SDL_Surface* P;
-SDL_Surface* Q;
-SDL_Surface* R;
-SDL_Surface* S;
-SDL_Surface* T;
-SDL_Surface* U;
-SDL_Surface* V;
-SDL_Surface* W;
-SDL_Surface* X;
-SDL_Surface* Y;
-SDL_Surface* Z;
+SDL_Surface* Digit0;
+SDL_Surface* Digit1;
+SDL_Surface* Digit2;
+SDL_Surface* Digit3;
+SDL_Surface* Digit4;
+SDL_Surface* Digit5;
+SDL_Surface* Digit6;
+SDL_Surface* Digit7;
+SDL_Surface* Digit8;
+SDL_Surface* Digit9;
 
-SDL_Surface* null;
-SDL_Surface* eins;
-SDL_Surface* zwei;
-SDL_Surface* drei;
-SDL_Surface* vier;
-SDL_Surface* fuenf;
-SDL_Surface* sechs;
-SDL_Surface* sieben;
-SDL_Surface* acht;
-SDL_Surface* neun;
+SDL_Surface* TmpSurface;
 
-SDL_Surface* tmp;
+unsigned long Score;
 
-unsigned long punkte;
-unsigned long reihen;
-unsigned long gefallene_felder;
-unsigned long steine;
-unsigned long steineimbild;
-unsigned long abgebaut;
+// rows where the user did neither press down to accelerate or up to immediately drop the brick to the lowest possible row
+// the lower this number is the higher the score, obviously ;)
+unsigned long RowsLetFallen;
+unsigned long RowsCleared;
 
-unsigned int level = 1;
-unsigned long lastlevel = 0;
+unsigned long TotalBricksSinceStart;
+unsigned long TotalBricksOnScreen;
+unsigned long TotalRowsCleared;
+unsigned long LastLevelRowsCleared = 0;
 
-unsigned int pause = 0;
+unsigned int Level = 1;
+unsigned int Pause = 0;
 
-//fstream highscore/*("highscore.txt",ios::app|ios::binary)*/;
-
-string name;
-string anzeige_name;
-
-void outzahlxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, unsigned long zahl)
+void RenderNumber(SDL_Surface* surface, unsigned int startx, unsigned int starty, unsigned long number)
 {
-    SDL_Rect ziel;
+    SDL_Rect targetArea;
 
-    ziel.x = startx;
-    ziel.y = starty;
+    targetArea.x = startx;
+    targetArea.y = starty;
 
-    unsigned long tmp_zahl = zahl;
+    unsigned long tmpNumber = number;
 
-    unsigned long quotient;
+    unsigned long digit;
     unsigned long rest = 1;
-    unsigned long divisor = 1000000000;		//beginne mit einer milliarde (größte ulong ~4,5mrd)
 
-    SDL_Surface* tmp = null;
+    // max score ~ 4.5 * 10^9, so we start by moduloing 10^9
+    unsigned long divisor = 1000000000;
 
-    int	fuehrungsnull = 1;
-    int nixmachen = 0;
+    SDL_Surface* tmp = Digit0;
+
+    int	leadingZero = 1;
+    int doNothing = 0;
 
     while (divisor > 0)
     {
-
-        quotient = tmp_zahl / divisor;
-        rest = tmp_zahl % divisor;
+        digit = tmpNumber / divisor;
+        rest = tmpNumber % divisor;
 
         divisor = divisor / 10;
-        tmp_zahl = rest;
+        tmpNumber = rest;
 
         //jetzt den quotienten auf die surface bringen
-        switch (quotient)
+        switch (digit)
         {
             case 0:
             {
-                if (fuehrungsnull == 0)
+                if (leadingZero == 0)
                 {
-                    tmp = null;
+                    tmp = Digit0;
                 }
                 else
                 {
                     if (rest == 0)
                     {
-                        tmp = null;
+                        tmp = Digit0;
                     }
                     else
                     {
-                        nixmachen = 1;
+                        doNothing = 1;
                     }
                 }
-                //fuehrungsnull	=0;
 
                 break;
             }
 
             case 1:
             {
-                tmp = eins;
+                tmp = Digit1;
                 break;
             }
 
             case 2:
             {
-                tmp = zwei;
+                tmp = Digit2;
                 break;
             }
 
             case 3:
             {
-                tmp = drei;
+                tmp = Digit3;
                 break;
             }
 
             case 4:
             {
-                tmp = vier;
+                tmp = Digit4;
                 break;
             }
 
             case 5:
             {
-                tmp = fuenf;
+                tmp = Digit5;
                 break;
             }
 
             case 6:
             {
-                tmp = sechs;
+                tmp = Digit6;
                 break;
             }
 
             case 7:
             {
-                tmp = sieben;
+                tmp = Digit7;
                 break;
             }
 
             case 8:
             {
-                tmp = acht;
+                tmp = Digit8;
                 break;
             }
 
             case 9:
             {
-                tmp = neun;
+                tmp = Digit9;
                 break;
             }
 
@@ -206,31 +201,30 @@ void outzahlxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, u
 
         };	//switch
 
-        if (nixmachen == 0)
+        if (doNothing == 0)
         {
-            fuehrungsnull = 0;
-            ziel.h = tmp->h;
-            ziel.w = tmp->w;
+            leadingZero = 0;
+            targetArea.h = tmp->h;
+            targetArea.w = tmp->w;
 
-            SDL_BlitSurface(tmp, 0, surface, &ziel);
+            SDL_BlitSurface(tmp, 0, surface, &targetArea);
 
-            ziel.x += ziel.h;
+            targetArea.x += targetArea.h;
         }
         else
         {
-            nixmachen = 0;
+            doNothing = 0;
         };
     };	//while
-    //SDL_UpdateRect(surface,startx,starty,ziel.x,(starty+30));
 };
 
-void outtextxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, string text)
+void RenderText(SDL_Surface* surface, unsigned int startx, unsigned int starty, string text)
 {
-    SDL_Rect quelle;
-    SDL_Rect ziel;
+    SDL_Rect sourceArea;
+    SDL_Rect targetArea;
 
-    ziel.x = startx;
-    ziel.y = starty;
+    targetArea.x = startx;
+    targetArea.y = starty;
 
     for (unsigned int i = 0; i < text.length(); ++i)
     {
@@ -238,217 +232,217 @@ void outtextxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, s
         {
             case 'A':
             {
-                tmp = A;
+                TmpSurface = LetterA;
                 break;
             }
 
             case 'B':
             {
-                tmp = B;
+                TmpSurface = LetterB;
                 break;
             }
 
             case 'C':
             {
-                tmp = C;
+                TmpSurface = LetterC;
                 break;
             }
 
             case 'D':
             {
-                tmp = D;
+                TmpSurface = LetterD;
                 break;
             }
 
             case 'E':
             {
-                tmp = E;
+                TmpSurface = LetterE;
                 break;
             }
 
             case 'F':
             {
-                tmp = F;
+                TmpSurface = LetterF;
                 break;
             }
 
             case 'G':
             {
-                tmp = G;
+                TmpSurface = LetterG;
                 break;
             }
 
             case 'H':
             {
-                tmp = H;
+                TmpSurface = LetterH;
                 break;
             }
 
             case 'I':
             {
-                tmp = I;
+                TmpSurface = LetterI;
                 break;
             }
 
             case 'J':
             {
-                tmp = J;
+                TmpSurface = LetterJ;
                 break;
             }
 
             case 'K':
             {
-                tmp = K;
+                TmpSurface = LetterK;
                 break;
             }
 
             case 'L':
             {
-                tmp = L;
+                TmpSurface = LetterL;
                 break;
             }
 
             case 'M':
             {
-                tmp = M;
+                TmpSurface = LetterM;
                 break;
             }
 
             case 'N':
             {
-                tmp = N;
+                TmpSurface = LetterN;
                 break;
             }
 
             case 'O':
             {
-                tmp = O;
+                TmpSurface = LetterO;
                 break;
             }
 
             case 'P':
             {
-                tmp = P;
+                TmpSurface = LetterP;
                 break;
             }
 
             case 'Q':
             {
-                tmp = Q;
+                TmpSurface = LetterQ;
                 break;
             }
 
             case 'R':
             {
-                tmp = R;
+                TmpSurface = LetterR;
                 break;
             }
 
             case 'S':
             {
-                tmp = S;
+                TmpSurface = LetterS;
                 break;
             }
 
             case 'T':
             {
-                tmp = T;
+                TmpSurface = LetterT;
                 break;
             }
 
             case 'U':
             {
-                tmp = U;
+                TmpSurface = LetterU;
                 break;
             }
 
             case 'V':
             {
-                tmp = V;
+                TmpSurface = LetterV;
                 break;
             };
             case 'W':
             {
-                tmp = W;
+                TmpSurface = LetterW;
                 break;
             }
 
             case 'X':
             {
-                tmp = X;
+                TmpSurface = LetterX;
                 break;
             }
 
             case 'Y':
             {
-                tmp = Y;
+                TmpSurface = LetterY;
                 break;
             }
 
             case 'Z':
             {
-                tmp = Z;
+                TmpSurface = LetterZ;
                 break;
             }
 
             case '0':
             {
-                tmp = null;
+                TmpSurface = Digit0;
                 break;
             }
 
             case '1':
             {
-                tmp = eins;
+                TmpSurface = Digit1;
                 break;
             }
 
             case '2':
             {
-                tmp = zwei;
+                TmpSurface = Digit2;
                 break;
             }
 
             case '3':
             {
-                tmp = drei;
+                TmpSurface = Digit3;
                 break;
             }
 
             case '4':
             {
-                tmp = vier;
+                TmpSurface = Digit4;
                 break;
             }
 
             case '5':
             {
-                tmp = fuenf;
+                TmpSurface = Digit5;
                 break;
             }
 
             case '6':
             {
-                tmp = sechs;
+                TmpSurface = Digit6;
                 break;
             }
 
             case '7':
             {
-                tmp = sieben;
+                TmpSurface = Digit7;
                 break;
             }
 
             case '8':
             {
-                tmp = acht;
+                TmpSurface = Digit8;
                 break;
             }
 
 
             case '9':
             {
-                tmp = neun;
+                TmpSurface = Digit9;
                 break;
             }
 
@@ -458,13 +452,13 @@ void outtextxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, s
             }
         }
 
-        ziel.h = tmp->h;
-        ziel.w = tmp->w;
+        targetArea.h = TmpSurface->h;
+        targetArea.w = TmpSurface->w;
 
-        SDL_BlitSurface(tmp, 0, surface, &ziel);
+        SDL_BlitSurface(TmpSurface, 0, surface, &targetArea);
 
-        ziel.x += ziel.h;
-        //ziel.y	+=ziel.w;
+        targetArea.x += targetArea.h;
+        //target.y	+=target.w;
     };
 
     // only partial update here? shouldnt this behave similarly to outzahlxy?
@@ -474,49 +468,61 @@ void outtextxy(SDL_Surface* surface, unsigned int startx, unsigned int starty, s
 
 SDL_Surface* LoadBMP(const char* szFile)
 {
-    SDL_Surface* orig;
-    SDL_Surface* convert;
+    SDL_Surface* originalBmp;
+    SDL_Surface* convertedPixelFormatBmp;
 
-    orig = SDL_LoadBMP(szFile);
-    if (!orig)
+    originalBmp = SDL_LoadBMP(szFile);
+    if (!originalBmp)
     {
-        fprintf(stderr, "%s konnte nicht geladen werden: %s\n", szFile, SDL_GetError());
+        fprintf(stderr, "%s could not be loaded: %s\n", szFile, SDL_GetError());
         exit(1);
     }
 
-    convert = SDL_ConvertSurface(orig, screen->format, screen->flags);
-    SDL_FreeSurface(orig);
-    if (!convert)
+    convertedPixelFormatBmp = SDL_ConvertSurface(originalBmp, Screen->format, Screen->flags);
+    SDL_FreeSurface(originalBmp);
+    if (!convertedPixelFormatBmp)
     {
-        fprintf(stderr, "%s konnte nicht ins Bildschirmformat konvertiert werden: %s\n", szFile, SDL_GetError());
+        fprintf(stderr, "%s could not be converted into screen pixel format: %s\n", szFile, SDL_GetError());
         exit(1);
     }
 
-    return convert;
+    return convertedPixelFormatBmp;
 }
 
+/*
+playing grid is 18 x 24
+
+but the bottom row (index 25)
+is invisible (but needed for collision detection)
+*/
 #define maxx	18
 #define maxy	25
-//die unterste reihe (y=24) ist unsichtbar aber voll belegt um den aufprall berechnen zukönnen
 
-class klotz
+class BrickTile
 {
     public:
-    int gesetzt;
-    int typ;	//quelldatei =640*480=307200/(20*20)=>768 versch typen
+    int IsSet;
+
+    // source bitmap is 640x480 => when tiling 20x20 => 307200/(20*20) => 768 tiles (i.e. types)
+    int Type;
 };
 
-unsigned int zusammenfall = 1;
+unsigned int CollapseClearedRows = 1;
 
-klotz klotzfeld[4][4];
-unsigned int klotz_x, klotz_y;		//linke obere ecke des klotzfeldes in relation zum spielfeld
-klotz spielfeld[maxx][maxy];
-klotz vorschau[4][4];
+BrickTile CurrentBrickGrid[4][4];
+BrickTile NextBrickGrid[4][4];
+BrickTile PlayingGrid[maxx][maxy];
 
-unsigned int fallgeschwindigkeit = 500;	//bedeutet ein kästchenfall je sekunde->laaaaaaangsam
-unsigned int naechster_stein = 1;
+// top left corner of current brick grid in relation to playing grid
+unsigned int CurrentBrick_X;
+unsigned int CurrentBrick_Y;
 
-void loesche_klotzfeld()
+// this means, if not for user pressing down or up, this will be the time the brick stays on one row before falling "one step" down
+// in milliseconds
+unsigned int BrickFallDelay_ms = 500;
+unsigned int NextBrickType = 1;
+
+void ClearCurrentBrickGrid()
 {
     unsigned int x;
     unsigned int y;
@@ -525,13 +531,13 @@ void loesche_klotzfeld()
     {
         for (y = 0; y < 4; ++y)
         {
-            klotzfeld[x][y].gesetzt = 0;
-            klotzfeld[x][y].typ = 0;
+            CurrentBrickGrid[x][y].IsSet = 0;
+            CurrentBrickGrid[x][y].Type = 0;
         }
     }
 }
 
-void loesche_vorschau()
+void ClearNextBrickGrid()
 {
     unsigned int x;
     unsigned int y;
@@ -540,21 +546,21 @@ void loesche_vorschau()
     {
         for (y = 0; y < 4; ++y)
         {
-            vorschau[x][y].gesetzt = 0;
-            vorschau[x][y].typ = 0;
+            NextBrickGrid[x][y].IsSet = 0;
+            NextBrickGrid[x][y].Type = 0;
         }
     }
 }
 
-void neu_level()
+void NextLevel()
 {
-    level++;
-    fallgeschwindigkeit = (fallgeschwindigkeit * 85) / 100;
-
+    Level++;
+    BrickFallDelay_ms = (BrickFallDelay_ms * 85) / 100;
 }
 
-void spielfeld_ini(unsigned int max)
-{	//max gibt die maximale höhe an anfangsklötzen an
+// max should define the max number of BrickTiles at game start (not used right now)
+void InitPlayingGrid(unsigned int max)
+{
     unsigned int x;
     unsigned int y;
 
@@ -562,202 +568,220 @@ void spielfeld_ini(unsigned int max)
     {
         for (y = 0; y < (maxy - 1); ++y)
         {
-            spielfeld[x][y].gesetzt = 0;
-            spielfeld[x][y].typ = 0;
+            PlayingGrid[x][y].IsSet = 0;
+            PlayingGrid[x][y].Type = 0;
 
-            spielfeld[x][maxy - 1].gesetzt = 1;
-            spielfeld[x][maxy - 1].typ = 1;
+            PlayingGrid[x][maxy - 1].IsSet = 1;
+            PlayingGrid[x][maxy - 1].Type = 1;
         }
     }
 
-    loesche_klotzfeld();
+    ClearCurrentBrickGrid();
 }
 
-void voll()
-{	//prüft bei auftreffen des steins auf vollständige reihen
 
+void ClearRowsIfPossible()
+{
     unsigned int x;
     unsigned int y;
     unsigned int y1;
-    int	reihevoll = 0;
+    int	rowComplete = 0;
 
     for (y = 0; y < (maxy - 1); ++y)
     {
-        if (spielfeld[0][y].gesetzt == 1)
+        if (PlayingGrid[0][y].IsSet == 1)
         {
-            reihevoll = 1;
+            rowComplete = 1;
             for (x = 1; x < maxx; ++x)
             {
-                if (spielfeld[x][y].gesetzt == 0)
+                if (PlayingGrid[x][y].IsSet == 0)
                 {
-                    reihevoll = 0;
-                    //cout<<"reihe nicht voll x"<<x<<" y"<<y<<endl;
+                    rowComplete = 0;
+                    //cout<<"row not complete x"<<x<<" y"<<y<<endl;
                     break;
                 }
             }
 
-            if (reihevoll == 1)
+            if (rowComplete == 1)
             {
-                reihen += 1;
+                RowsCleared += 1;
 
                 for (x = 0; x < maxx; ++x)
                 {
-                    spielfeld[x][y].gesetzt = 0;
+                    PlayingGrid[x][y].IsSet = 0;
                 }
 
-                steineimbild -= maxx;
-                abgebaut++;
-                //cout<<"reihe y="<<y<<" geloescht"<<endl;
+                TotalBricksOnScreen -= maxx;
+                TotalRowsCleared++;
+                //cout<<"row y="<<y<<" cleared"<<endl;
 
-                update_kloetze();
+                UpdateBricks();
 
-                SDL_RenderPresent(renderer);
+                SDL_RenderPresent(Renderer);
 
-                if (zusammenfall == 1)
+                if (CollapseClearedRows == 1)
                 {
                     for (x = 0; x < maxx; ++x)
                     {
                         for (y1 = y; y1 > 0; --y1)
                         {
-                            spielfeld[x][y1].gesetzt = spielfeld[x][y1 - 1].gesetzt;
-                            spielfeld[x][y1].typ = spielfeld[x][y1 - 1].typ;
+                            PlayingGrid[x][y1].IsSet = PlayingGrid[x][y1 - 1].IsSet;
+                            PlayingGrid[x][y1].Type = PlayingGrid[x][y1 - 1].Type;
                         }
                     }
 
-                    if ((abgebaut - lastlevel) == 8)
+                    if ((TotalRowsCleared - LastLevelRowsCleared) == 8)
                     {
-                        lastlevel = abgebaut;
-                        neu_level();
+                        LastLevelRowsCleared = TotalRowsCleared;
+                        NextLevel();
                     }
 
                     SDL_Delay(50);
 
-                    update_kloetze();
+                    UpdateBricks();
 
-                    SDL_RenderPresent(renderer);
+                    SDL_RenderPresent(Renderer);
                 }
             }
         }
     }
 }
 
-void ende()
+void DrawGameOverAndQuit()
 {
-    SDL_Rect quelle;
-    SDL_Rect ziel;
+    SDL_Rect sourceArea;
+    SDL_Rect targetArea;
 
-    quelle.h = 40;
-    quelle.w = 480;
-    quelle.x = 0;
-    quelle.y = 0;
+    sourceArea.h = 40;
+    sourceArea.w = 480;
+    sourceArea.x = 0;
+    sourceArea.y = 0;
 
-    ziel.h = 40;
-    ziel.w = 480;
-    ziel.x = 0;
-    ziel.y = 200;
+    targetArea.h = 40;
+    targetArea.w = 480;
+    targetArea.x = 0;
+    targetArea.y = 200;
 
-    SDL_BlitSurface(gameover, &quelle, spielgrund, &ziel);
+    SDL_BlitSurface(GameOver, &sourceArea, PlayGround, &targetArea);
 
-    quelle.x = 0;
-    quelle.y = 0;
-    quelle.h = 480;
-    quelle.w = 480;
+    sourceArea.x = 0;
+    sourceArea.y = 0;
+    sourceArea.h = 480;
+    sourceArea.w = 480;
 
-    ziel.x = 80;
-    ziel.y = 0;
-    ziel.h = 480;
-    ziel.w = 240;
+    targetArea.x = 80;
+    targetArea.y = 0;
+    targetArea.h = 480;
+    targetArea.w = 240;
 
-    SDL_BlitSurface(spielgrund, &quelle, screen, &ziel);
+    SDL_BlitSurface(PlayGround, &sourceArea, Screen, &targetArea);
 
-    SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
+    SDL_UpdateTexture(ScreenTexture, NULL, Screen->pixels, Screen->pitch);
+    SDL_RenderClear(Renderer);
+    SDL_RenderCopy(Renderer, ScreenTexture, NULL, NULL);
 
-    SDL_RenderPresent(renderer);
+    SDL_RenderPresent(Renderer);
 
     SDL_Delay(3000);
 
-    //highscore<<name<<endl;
-    //highscore.close();
-
-    running = 0;
+    Running = 0;
 }
 
-void steinvorschau()
+void UpdateNextBrickGrid()
 {
-    loesche_vorschau();
+    ClearNextBrickGrid();
 
-    switch (naechster_stein)
+    switch (NextBrickType)
     {
+/*
+oo
+oo
+*/
         case 0:
         {
-            vorschau[1][0].gesetzt = 1;
-            vorschau[1][0].typ = rand() % 768 + 1;
-            vorschau[1][1].gesetzt = 1;
-            vorschau[1][1].typ = rand() % 768 + 1;
-            vorschau[2][0].gesetzt = 1;
-            vorschau[2][0].typ = rand() % 768 + 1;
-            vorschau[2][1].gesetzt = 1;
-            vorschau[2][1].typ = rand() % 768 + 1;
+            NextBrickGrid[1][0].IsSet = 1;
+            NextBrickGrid[1][0].Type = rand() % 768 + 1;
+            NextBrickGrid[1][1].IsSet = 1;
+            NextBrickGrid[1][1].Type = rand() % 768 + 1;
+            NextBrickGrid[2][0].IsSet = 1;
+            NextBrickGrid[2][0].Type = rand() % 768 + 1;
+            NextBrickGrid[2][1].IsSet = 1;
+            NextBrickGrid[2][1].Type = rand() % 768 + 1;
 
             break;
         }
-
+/*
+oooo
+*/
         case 1:
         {
-            vorschau[0][0].gesetzt = 1;
-            vorschau[0][0].typ = rand() % 768 + 1;
-            vorschau[1][0].gesetzt = 1;
-            vorschau[1][0].typ = rand() % 768 + 1;
-            vorschau[2][0].gesetzt = 1;
-            vorschau[2][0].typ = rand() % 768 + 1;
-            vorschau[3][0].gesetzt = 1;
-            vorschau[3][0].typ = rand() % 768 + 1;
+            NextBrickGrid[0][0].IsSet = 1;
+            NextBrickGrid[0][0].Type = rand() % 768 + 1;
+            NextBrickGrid[1][0].IsSet = 1;
+            NextBrickGrid[1][0].Type = rand() % 768 + 1;
+            NextBrickGrid[2][0].IsSet = 1;
+            NextBrickGrid[2][0].Type = rand() % 768 + 1;
+            NextBrickGrid[3][0].IsSet = 1;
+            NextBrickGrid[3][0].Type = rand() % 768 + 1;
 
             break;
         }
-
+/*
+ooo
+o
+*/
         case 2:
         {
-            vorschau[0][0].gesetzt = 1;
-            vorschau[0][0].typ = rand() % 768 + 1;
-            vorschau[1][0].gesetzt = 1;
-            vorschau[1][0].typ = rand() % 768 + 1;
-            vorschau[2][0].gesetzt = 1;
-            vorschau[2][0].typ = rand() % 768 + 1;
-            vorschau[0][1].gesetzt = 1;
-            vorschau[0][1].typ = rand() % 768 + 1;
+            NextBrickGrid[0][0].IsSet = 1;
+            NextBrickGrid[0][0].Type = rand() % 768 + 1;
+            NextBrickGrid[1][0].IsSet = 1;
+            NextBrickGrid[1][0].Type = rand() % 768 + 1;
+            NextBrickGrid[2][0].IsSet = 1;
+            NextBrickGrid[2][0].Type = rand() % 768 + 1;
+            NextBrickGrid[0][1].IsSet = 1;
+            NextBrickGrid[0][1].Type = rand() % 768 + 1;
 
             break;
         }
-
+/*
+ooo
+ o
+*/
         case 3:
         {
-            vorschau[0][0].gesetzt = 1;
-            vorschau[0][0].typ = rand() % 768 + 1;
-            vorschau[1][0].gesetzt = 1;
-            vorschau[1][0].typ = rand() % 768 + 1;
-            vorschau[2][0].gesetzt = 1;
-            vorschau[2][0].typ = rand() % 768 + 1;
-            vorschau[1][1].gesetzt = 1;
-            vorschau[1][1].typ = rand() % 768 + 1;
+            NextBrickGrid[0][0].IsSet = 1;
+            NextBrickGrid[0][0].Type = rand() % 768 + 1;
+            NextBrickGrid[1][0].IsSet = 1;
+            NextBrickGrid[1][0].Type = rand() % 768 + 1;
+            NextBrickGrid[2][0].IsSet = 1;
+            NextBrickGrid[2][0].Type = rand() % 768 + 1;
+            NextBrickGrid[1][1].IsSet = 1;
+            NextBrickGrid[1][1].Type = rand() % 768 + 1;
 
             break;
         }
-
+/*
+o
+ooo
+*/
         case 4:
         {
-            vorschau[0][0].gesetzt = 1;
-            vorschau[0][0].typ = rand() % 768 + 1;
-            vorschau[0][1].gesetzt = 1;
-            vorschau[0][1].typ = rand() % 768 + 1;
-            vorschau[1][1].gesetzt = 1;
-            vorschau[1][1].typ = rand() % 768 + 1;
-            vorschau[2][1].gesetzt = 1;
-            vorschau[2][1].typ = rand() % 768 + 1;
+            NextBrickGrid[0][0].IsSet = 1;
+            NextBrickGrid[0][0].Type = rand() % 768 + 1;
+            NextBrickGrid[0][1].IsSet = 1;
+            NextBrickGrid[0][1].Type = rand() % 768 + 1;
+            NextBrickGrid[1][1].IsSet = 1;
+            NextBrickGrid[1][1].Type = rand() % 768 + 1;
+            NextBrickGrid[2][1].IsSet = 1;
+            NextBrickGrid[2][1].Type = rand() % 768 + 1;
         }
+/*
+(currently inactive)
+"RANDOM BRICK"
 
+any tile in 4x4 COULD be set.
+(but still 4 tiles at max for this brick)
+*/
         case 5:
         {
             unsigned int counter = 4;
@@ -769,30 +793,36 @@ void steinvorschau()
                     if (counter == 0) {}
                     else
                     {
-                        vorschau[x][y].gesetzt = rand() % 2;	//entweder 0 oder 1
-                        vorschau[x][y].typ = rand() % 768 + 1;
+                        NextBrickGrid[x][y].IsSet = rand() % 2;
+                        NextBrickGrid[x][y].Type = rand() % 768 + 1;
 
                         --counter;
                     }
                 }
             }
         }
+/*
+(currently inactive)
+"MEGA BRICK"
 
+any tile in 4x4 COULD be set.
+(number of tiles is unlimited)
+*/
         case 6:
         {
             for (unsigned int x = 0; x < 4; ++x)
             {
                 for (unsigned int y = 0; y < 4; ++y)
                 {
-                    vorschau[x][y].gesetzt = rand() % 2;	//entweder 0 oder 1
-                    vorschau[x][y].typ = rand() % 768 + 1;
+                    NextBrickGrid[x][y].IsSet = rand() % 2;	//either 0 or 1
+                    NextBrickGrid[x][y].Type = rand() % 768 + 1;
                 }
             }
         }
     }
 }
 
-unsigned long pot(unsigned int base, unsigned int exp)
+unsigned long Pot(unsigned int base, unsigned int exp)
 {
     unsigned int tmp = base;
 
@@ -802,114 +832,43 @@ unsigned long pot(unsigned int base, unsigned int exp)
     }
     else
     {
-        return (base * pot(base, (exp - 1)));
+        return (base * Pot(base, (exp - 1)));
     }
 }
 
-void gib_punkte()
+void UpdateScore()
 {
-    punkte += 10 + ((reihen > 0) ? (100 * (pot(level, reihen))) : 0) + ((float(gefallene_felder) / float(maxy - 1)) * 10 * level);
-    reihen = 0;
+    Score += 10 +
+        ((RowsCleared > 0) ? (100 * (Pot(Level, RowsCleared))) : 0) +
+        ((float(RowsLetFallen) / float(maxy - 1)) * 10 * Level);    // shouldn't this division be reversed? this way letting a brick fall for longer uncontrolled would give more points?
+
+    RowsCleared = 0;
 };
 
-int erzeuge_stein()
-{	// erzeugt einen neuen stein im klotzfeld
-/*
-siehe dokumentation.txt für steinarten
-*/
-    voll();
-    loesche_klotzfeld();
-    klotz_x = 8;
-    klotz_y = 0;
-    /*switch(naechster_stein){
+int CreateBrick()
+{
+    ClearRowsIfPossible();
+    ClearCurrentBrickGrid();
+    CurrentBrick_X = 8;
+    CurrentBrick_Y = 0;
 
-    case 0:{
-
-    klotzfeld[1][0].gesetzt	=	1;
-    klotzfeld[1][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][0].typ<<endl;
-    klotzfeld[1][1].gesetzt	=	1;
-    klotzfeld[1][1].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][1].typ<<endl;
-    klotzfeld[2][0].gesetzt	=	1;
-    klotzfeld[2][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[2][0].typ<<endl;
-    klotzfeld[2][1].gesetzt	=	1;
-    klotzfeld[2][1].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[2][1].typ<<endl;
-
-    break;}
-
-    case 1:{
-
-    klotzfeld[0][0].gesetzt	=	1;
-    klotzfeld[0][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[0][0].typ<<endl;
-    klotzfeld[1][0].gesetzt	=	1;
-    klotzfeld[1][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][0].typ<<endl;
-    klotzfeld[2][0].gesetzt	=	1;
-    klotzfeld[2][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[2][0].typ<<endl;
-    klotzfeld[3][0].gesetzt	=	1;
-    klotzfeld[3][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[3][0].typ<<endl;
-
-    break;}
-
-    case 2:{
-
-    klotzfeld[0][0].gesetzt	=	1;
-    klotzfeld[0][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[0][0].typ<<endl;
-    klotzfeld[1][0].gesetzt	=	1;
-    klotzfeld[1][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][0].typ<<endl;
-    klotzfeld[2][0].gesetzt	=	1;
-    klotzfeld[2][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[2][0].typ<<endl;
-    klotzfeld[0][1].gesetzt=	1;
-    klotzfeld[0][1].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[0][1].typ<<endl;
-
-    break;}
-
-    case 3:{
-
-    klotzfeld[0][0].gesetzt	=	1;
-    klotzfeld[0][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[0][0].typ<<endl;
-    klotzfeld[1][0].gesetzt	=	1;
-    klotzfeld[1][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][0].typ<<endl;
-    klotzfeld[2][0].gesetzt	=	1;
-    klotzfeld[2][0].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[2][0].typ<<endl;
-    klotzfeld[1][1].gesetzt	=	1;
-    klotzfeld[1][1].typ		=	rand()%768	+1;
-    cout<<"typ: "<<klotzfeld[1][1].typ<<endl;
-
-    break;}
-
-    };*/
-
-    naechster_stein = rand() % 4;
+    NextBrickType = rand() % 4;
 
     unsigned int x, y;
     for (x = 0; x < 4; ++x)
     {
         for (y = 0; y < 4; ++y)
         {
-            klotzfeld[x][y] = vorschau[x][y];
+            CurrentBrickGrid[x][y] = NextBrickGrid[x][y];
 
-            if (klotzfeld[x][y].gesetzt == 1)
+            if (CurrentBrickGrid[x][y].IsSet == 1)
             {
-                if (spielfeld[x + klotz_x][y + klotz_y + 1].gesetzt == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
                 {
                     return 1;
                 }
 
-                if (spielfeld[x + klotz_x][y + klotz_y].gesetzt == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet == 1)
                 {
                     return 1;
                 }
@@ -917,48 +876,45 @@ siehe dokumentation.txt für steinarten
         }
     }
 
-    steinvorschau();
-    steineimbild += 4;
-    steine++;
-    gefallene_felder = 0;
+    UpdateNextBrickGrid();
+    TotalBricksOnScreen += 4;
+    TotalBricksSinceStart++;
+    RowsLetFallen = 0;
     return 0;
 }
 
-unsigned int abstand()
-{		//gibt null zurück wenn der klotz direkt über einem stein ist sonst 1!
-    unsigned int x;
-    unsigned int y;
+// returns 0 if there is no space between currently falling brick and ground/bricks lying on the ground
+// (quits game if return value is 0)
+// returns 1 if threre is any space at all between them
+unsigned int CurrentBrickDistanceToGround()
+{
     unsigned int neu = 0;
 
-    for (x = 0; x < 4; x++)
-        for (y = 0; y < 4; y++)
+    for (unsigned int x = 0; x < 4; x++)
+        for (unsigned int y = 0; y < 4; y++)
         {
-            if (klotzfeld[x][y].gesetzt == 1)
+            if (CurrentBrickGrid[x][y].IsSet == 1)
             {
-                //if((x+klotz_x)>=maxx)	return 1;
-                /*if((y+klotz_y+1)>=maxy){
-
-                return 0;};*/
-                if (spielfeld[x + klotz_x][y + klotz_y + 1].gesetzt == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
                 {
                     for (x = 0; x < 4; ++x)
                     {
                         for (y = 0; y < 4; ++y)
                         {
-                            if (klotzfeld[x][y].gesetzt == 1)
+                            if (CurrentBrickGrid[x][y].IsSet == 1)
                             {
-                                spielfeld[x + klotz_x][y + klotz_y].gesetzt = 1;
-                                spielfeld[x + klotz_x][y + klotz_y].typ = klotzfeld[x][y].typ;
+                                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet = 1;
+                                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Type = CurrentBrickGrid[x][y].Type;
                             }
                         }
                     }
 
-                    gib_punkte();
+                    UpdateScore();
 
-                    int zuende = erzeuge_stein();
+                    int zuende = CreateBrick();
                     if (zuende == 1)
                     {
-                        ende();
+                        DrawGameOverAndQuit();
                     }
 
                     return 0;
@@ -969,362 +925,292 @@ unsigned int abstand()
     return 1;
 }
 
-void fallen_lassen(Uint32& letzter_fall, Uint32 aktuelleZeit)
+void AdjustBrickFallSpeedToFrameRate(Uint32& lastActualFall, Uint32 currentTimeStamp)
 {
-    if ((aktuelleZeit - letzter_fall) >= fallgeschwindigkeit)
+    if ((currentTimeStamp - lastActualFall) >= BrickFallDelay_ms)
     {
-        unsigned int i = abstand();
+        unsigned int i = CurrentBrickDistanceToGround();
         if (i > 0)
         {
-            ++klotz_y;
-            gefallene_felder++;
-            letzter_fall = aktuelleZeit;
-        }
-        else
-        {
-            /*			for(x=0;x<4;++x)
-            for(y=0;y<4;++y){
-                if(klotzfeld[x][y].gesetzt==1){
-                    spielfeld[x+klotz_x][y+klotz_y].gesetzt	=1;
-                    spielfeld[x+klotz_x][y+klotz_y].typ		=klotzfeld[x][y].typ;
-                };
-            };*/
+            ++CurrentBrick_Y;
+            RowsLetFallen++;
+            lastActualFall = currentTimeStamp;
         }
     }
 }
 
-/*void update_oklotz(){
-
-unsigned int x,y,tmptyp,qx,qy;
-
-SDL_Rect	quelle,ziel;
-
-quelle.h	=20;
-quelle.w	=20;
-quelle.x	=0;
-quelle.y	=0;
-
-ziel.h		=20;
-ziel.w		=20;
-ziel.x		=0;
-ziel.y		=0;
-
-//spielgrund	=	LoadBMP("spielgrund.bmp");//leergrund;
-SDL_BlitSurface(leergrund, 0, spielgrund, 0);
-
-
-for(x=0;x<maxx;++x)
-for(y=0;y<(maxy-1);++y){
-
-if(spielfeld[x][y].gesetzt==1){
-
-tmptyp			=	spielfeld[x][y].typ;
-quelle.x		=	((tmptyp-1)%32)*20;
-quelle.y		=	((tmptyp-1)/32)*20;
-
-ziel.x			=	x*20;
-ziel.y			=	y*20;
-
-SDL_BlitSurface(klotzquelle, &quelle, spielgrund, &ziel);};
-
-};
-
-quelle.x	=0;
-quelle.y	=0;
-quelle.h	=480;
-quelle.w	=480;
-
-ziel.x		=80;
-ziel.y		=0;
-ziel.h		=480;
-ziel.w		=240;
-
-SDL_BlitSurface(spielgrund, &quelle, screen, &ziel);
-
-
-
-
-};*/
-
-void update_kloetze()
+void UpdateBricks()
 {
     unsigned int x;
     unsigned int y;
-    unsigned int tmptyp;
-    SDL_Rect quelle;
-    SDL_Rect ziel;
+    unsigned int tmpType;
+    SDL_Rect sourceArea;
+    SDL_Rect targetArea;
 
-    quelle.h = 20;
-    quelle.w = 20;
-    quelle.x = 0;
-    quelle.y = 0;
+    sourceArea.h = 20;
+    sourceArea.w = 20;
+    sourceArea.x = 0;
+    sourceArea.y = 0;
 
-    ziel.h = 20;
-    ziel.w = 20;
-    ziel.x = 0;
-    ziel.y = 0;
+    targetArea.h = 20;
+    targetArea.w = 20;
+    targetArea.x = 0;
+    targetArea.y = 0;
 
-    //spielgrund	=	LoadBMP("spielgrund.bmp");//leergrund;
-    SDL_BlitSurface(leergrund, 0, spielgrund, 0);
-    SDL_BlitSurface(vorschauleer, 0, vorschaugrund, 0);
+    SDL_BlitSurface(PlayGround_empty, 0, PlayGround, 0);
+    SDL_BlitSurface(PreviewGround_empty, 0, PreviewGround, 0);
 
     for (x = 0; x < maxx; ++x)
     {
         for (y = 0; y < (maxy - 1); ++y)
         {
-            if (spielfeld[x][y].gesetzt == 1)
+            if (PlayingGrid[x][y].IsSet == 1)
             {
-                tmptyp = spielfeld[x][y].typ;
-                quelle.x = ((tmptyp - 1) % 32) * 20;
-                quelle.y = ((tmptyp - 1) / 32) * 20;
+                tmpType = PlayingGrid[x][y].Type;
+                sourceArea.x = ((tmpType - 1) % 32) * 20;
+                sourceArea.y = ((tmpType - 1) / 32) * 20;
 
-                ziel.x = x * 20;
-                ziel.y = y * 20;
+                targetArea.x = x * 20;
+                targetArea.y = y * 20;
 
-                SDL_BlitSurface(klotzquelle, &quelle, spielgrund, &ziel);
+                SDL_BlitSurface(BrickSource, &sourceArea, PlayGround, &targetArea);
             }
         }
     }
 
-    // den beweglichen klotz extra einberechnen...
+    // calculate the movable (currently falling) brick in this last step
     for (x = 0; x < 4; ++x)
     {
         for (y = 0; y < 4; ++y)
         {
-            if (klotzfeld[x][y].gesetzt == 1)
+            if (CurrentBrickGrid[x][y].IsSet == 1)
             {
-                tmptyp = klotzfeld[x][y].typ;
-                quelle.x = ((tmptyp - 1) % 32) * 20;
-                quelle.y = ((tmptyp - 1) / 32) * 20;
+                tmpType = CurrentBrickGrid[x][y].Type;
+                sourceArea.x = ((tmpType - 1) % 32) * 20;
+                sourceArea.y = ((tmpType - 1) / 32) * 20;
 
-                ziel.x = (klotz_x + x) * 20;
-                ziel.y = (klotz_y + y) * 20;
+                targetArea.x = (CurrentBrick_X + x) * 20;
+                targetArea.y = (CurrentBrick_Y + y) * 20;
 
-                SDL_BlitSurface(klotzquelle, &quelle, spielgrund, &ziel);
+                SDL_BlitSurface(BrickSource, &sourceArea, PlayGround, &targetArea);
             }
-            /*if(vorschau[x][y].gesetzt==1){
-
-            tmptyp		=	vorschau[x][y].typ;
-            quelle.x	=	((tmptyp-1)%32)*20;
-            quelle.y	=	((tmptyp-1)/32)*20;
-
-            ziel.x		=	(klotz_x+x)*20;
-            ziel.y		=	(klotz_y+y)*20;
-
-            SDL_BlitSurface(klotzquelle, &quelle, spielgrund, &ziel);
-            };*/
         }
     }
 
-    quelle.x = 0;
-    quelle.y = 0;
-    quelle.h = 480;
-    quelle.w = 360;
+    sourceArea.x = 0;
+    sourceArea.y = 0;
+    sourceArea.h = 480;
+    sourceArea.w = 360;
 
-    ziel.x = 200;
-    ziel.y = 0;
-    ziel.h = 480;
-    ziel.w = 360;
+    targetArea.x = 200;
+    targetArea.y = 0;
+    targetArea.h = 480;
+    targetArea.w = 360;
 
-    SDL_BlitSurface(spielgrund, &quelle, screen, &ziel);
+    SDL_BlitSurface(PlayGround, &sourceArea, Screen, &targetArea);
 
-    SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
+    SDL_UpdateTexture(ScreenTexture, NULL, Screen->pixels, Screen->pitch);
+    SDL_RenderClear(Renderer);
+    SDL_RenderCopy(Renderer, ScreenTexture, NULL, NULL);
 }
 
-void zeichne_hintergrund()
+void DrawBackground()
 {
-    //linker rand....
-    unsigned int tmptyp;
+    // left side of the screen ....
+    unsigned int tmpType;
+
+    SDL_Rect sourceArea;
+    SDL_Rect targetArea;
+
+    sourceArea.x = 0;
+    sourceArea.y = 0;
+    sourceArea.w = 200;
+    sourceArea.h = 480;
+
+    targetArea.x = 0;
+    targetArea.y = 0;
+
+    SDL_BlitSurface(Background_empty, &sourceArea, Background, &targetArea);
+    RenderNumber(Background, 0, 340, TotalBricksSinceStart);
+    RenderNumber(Background, 0, 380, TotalBricksOnScreen);
+    RenderNumber(Background, 0, 420, Level);
+    RenderNumber(Background, 0, 460, TotalRowsCleared);
+    RenderNumber(Background, 0, 300, Score);
+    SDL_BlitSurface(Background, &sourceArea, Screen, &targetArea);
+
+    // next brick preview on the left
+    sourceArea.x = 0;
+    sourceArea.y = 0;
+    sourceArea.w = 100;
+    sourceArea.h = 100;
+
+    targetArea.x = 50;
+    targetArea.y = 20;
+
+    SDL_BlitSurface(PreviewGround_empty, &sourceArea, Screen, &targetArea);
+
+    // draw brick preview
+    sourceArea.h = 20;
+    sourceArea.w = 20;
+    targetArea.h = 20;
+    targetArea.w = 20;
+
+    for (unsigned int x = 0; x < 4; ++x)
+    {
+        for (unsigned int y = 0; y < 4; ++y)
+        {
+            if (NextBrickGrid[x][y].IsSet == 1)
+            {
+                tmpType = NextBrickGrid[x][y].Type;
+                sourceArea.x = ((tmpType - 1) % 32) * 20;
+                sourceArea.y = ((tmpType - 1) / 32) * 20;
+
+                targetArea.x = 20 + (x * 20);
+                targetArea.y = 20 + (y * 20);
+
+                SDL_BlitSurface(BrickSource, &sourceArea, PreviewGround, &targetArea);
+            }
+        }
+    }
+
+    sourceArea.x = 0;
+    sourceArea.y = 0;
+    sourceArea.h = 100;
+    sourceArea.w = 100;
+
+    targetArea.x = 50;
+    targetArea.y = 20;
+    targetArea.h = 100;
+    targetArea.w = 100;
+
+    SDL_BlitSurface(PreviewGround, 0, Screen, &targetArea);
+
+    // right side of the screen
+    sourceArea.x = 560;
+    sourceArea.y = 0;
+    sourceArea.w = 80;
+    sourceArea.h = 480;
+
+    targetArea.x = 560;
+    targetArea.y = 0;
+
+    SDL_BlitSurface(Background_empty, &sourceArea, Screen, &targetArea);
+
+    SDL_UpdateTexture(ScreenTexture, NULL, Screen->pixels, Screen->pitch);
+    SDL_RenderClear(Renderer);
+    SDL_RenderCopy(Renderer, ScreenTexture, NULL, NULL);
+}
+
+// try to move one field left
+void TryMoveLeft()
+{
+    int isOccupied = 0;
+
+    for (unsigned int x = 0; x < 4; ++x)
+    {
+        for (unsigned int y = 0; y < 4; ++y)
+        {
+            if (CurrentBrickGrid[x][y].IsSet == 1)
+            {
+                // cant move anymore to the left than index 0
+                if ((x + CurrentBrick_X) == 0)
+                {
+                    isOccupied = 1;
+                }
+
+                // cant move anymore to the left if that index is occupied by something else
+                if (PlayingGrid[x + CurrentBrick_X - 1][y + CurrentBrick_Y].IsSet == 1)
+                {
+                    isOccupied = 1;
+                }
+            }
+        }
+    }
+
+    if (isOccupied == 0)
+    {
+        --CurrentBrick_X;
+    }
+}
+
+// try to move one field right
+void TryMoveRight()
+{
+    int isOccupied = 0;
+
+    for (unsigned int x = 0; x < 4; ++x)
+    {
+        for (unsigned int y = 0; y < 4; ++y)
+        {
+            if (CurrentBrickGrid[x][y].IsSet == 1)
+            {
+                // cant move anymore to the right than index (max - 1)
+                if ((x + CurrentBrick_X) == (maxx - 1))
+                {
+                    isOccupied = 1;
+                }
+
+                // cant move anymore to the left if that index is occupied by something else
+                if (PlayingGrid[x + CurrentBrick_X + 1][y + CurrentBrick_Y].IsSet == 1)
+                {
+                    isOccupied = 1;
+                }
+            }
+        }
+    }
+
+    if (isOccupied == 0)
+    {
+        ++CurrentBrick_X;
+    }
+}
+
+// try to move one field down
+void TryMoveDown()
+{
+    int IsOccupied = 0;
+
+    for (unsigned int x = 0; x < 4; ++x)
+    {
+        for (unsigned int y = 0; y < 4; ++y)
+        {
+            if (CurrentBrickGrid[x][y].IsSet == 1)
+            {
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
+                {
+                    IsOccupied = 1;
+                }
+            }
+        }
+    }
+
+    if (IsOccupied == 0) ++CurrentBrick_Y;
+}
+
+// brick is to move from current position to the lowest possible (the ground)
+void LetFallToGround()
+{
+    unsigned int groundHit = 0;
     unsigned int x;
     unsigned int y;
 
-    SDL_Rect quelle;
-    SDL_Rect ziel;
-
-    quelle.x = 0;
-    quelle.y = 0;
-    quelle.w = 200;
-    quelle.h = 480;
-
-    ziel.x = 0;
-    ziel.y = 0;
-
-    SDL_BlitSurface(leerhintergrund, &quelle, hintergrund, &ziel);
-    outzahlxy(hintergrund, 0, 340, steine);
-    outzahlxy(hintergrund, 0, 380, steineimbild);
-    outzahlxy(hintergrund, 0, 420, level);
-    outzahlxy(hintergrund, 0, 460, abgebaut);
-    outzahlxy(hintergrund, 0, 300, punkte);
-    SDL_BlitSurface(hintergrund, &quelle, screen, &ziel);
-
-    //steinvorschauhintergrund im linken rand...
-    quelle.x = 0;
-    quelle.y = 0;
-    quelle.w = 100;
-    quelle.h = 100;
-
-    ziel.x = 50;
-    ziel.y = 20;
-
-    SDL_BlitSurface(vorschauleer, &quelle, screen, &ziel);
-
-    //steinvorschau zeichnen...
-    quelle.h = 20;
-    quelle.w = 20;
-    ziel.h = 20;
-    ziel.w = 20;
-
-    for (x = 0; x < 4; ++x)
-    {
-        for (y = 0; y < 4; ++y)
-        {
-            if (vorschau[x][y].gesetzt == 1)
-            {
-                tmptyp = vorschau[x][y].typ;
-                quelle.x = ((tmptyp - 1) % 32) * 20;
-                quelle.y = ((tmptyp - 1) / 32) * 20;
-
-                ziel.x = 20 + (x * 20);
-                ziel.y = 20 + (y * 20);
-
-
-                SDL_BlitSurface(klotzquelle, &quelle, vorschaugrund, &ziel);
-            }
-        }
-    }
-
-    quelle.x = 0;
-    quelle.y = 0;
-    quelle.h = 100;
-    quelle.w = 100;
-
-    ziel.x = 50;
-    ziel.y = 20;
-    ziel.h = 100;
-    ziel.w = 100;
-
-    SDL_BlitSurface(vorschaugrund, 0, screen, &ziel);
-
-    //rechter rand
-    quelle.x = 560;
-    quelle.y = 0;
-    quelle.w = 80;
-    quelle.h = 480;
-
-    ziel.x = 560;
-    ziel.y = 0;
-
-    SDL_BlitSurface(leerhintergrund, &quelle, screen, &ziel);
-
-    SDL_UpdateTexture(screenTexture, NULL, screen->pixels, screen->pitch);
-    SDL_RenderClear(renderer);
-    SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
-}
-
-void links_bewegen()
-{
-    int besetzt = 0;
-
-    for (unsigned int x = 0; x < 4; ++x)
-    {
-        for (unsigned int y = 0; y < 4; ++y)
-        {
-            if (klotzfeld[x][y].gesetzt == 1)
-            {
-                if ((x + klotz_x) == 0)
-                {
-                    besetzt = 1;
-                }
-
-                if (spielfeld[x + klotz_x - 1][y + klotz_y].gesetzt == 1)
-                {
-                    besetzt = 1;
-                }
-            }
-        }
-    }
-
-    if (besetzt == 0)
-    {
-        --klotz_x;
-    }
-}
-
-void rechts_bewegen()
-{
-    int besetzt = 0;
-
-    for (unsigned int x = 0; x < 4; ++x)
-    {
-        for (unsigned int y = 0; y < 4; ++y)
-        {
-            if (klotzfeld[x][y].gesetzt == 1)
-            {
-                if ((x + klotz_x) == (maxx - 1))
-                {
-                    besetzt = 1;
-                }
-
-                if (spielfeld[x + klotz_x + 1][y + klotz_y].gesetzt == 1)
-                {
-                    besetzt = 1;
-                }
-            }
-        }
-    }
-
-    if (besetzt == 0)
-    {
-        ++klotz_x;
-    }
-}
-
-void unten_bewegen()
-{
-    int besetzt = 0;
-
-    for (unsigned int x = 0; x < 4; ++x)
-    {
-        for (unsigned int y = 0; y < 4; ++y)
-        {
-            if (klotzfeld[x][y].gesetzt == 1)
-            {
-                if (spielfeld[x + klotz_x][y + klotz_y + 1].gesetzt == 1)
-                {
-                    besetzt = 1;
-                }
-            }
-        }
-    }
-
-    if (besetzt == 0) ++klotz_y;
-}
-
-void frei_fall()
-{
-    unsigned int angekommen = 0;
-    unsigned int x;
-    unsigned int y;
-
-    while (angekommen != 1)
+    while (groundHit != 1)
     {
         for (x = 0; x < 4; ++x)
             for (y = 0; y < 4; ++y)
             {
-                if (klotzfeld[x][y].gesetzt == 1)
+                if (CurrentBrickGrid[x][y].IsSet == 1)
                 {
-                    if (spielfeld[x + klotz_x][y + klotz_y + 1].gesetzt == 1)
+                    if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
                     {
-                        angekommen = 1;
+                        groundHit = 1;
                     }
                 }
             }
 
-        if (angekommen != 1)
+        if (groundHit != 1)
         {
-            ++klotz_y;
+            ++CurrentBrick_Y;
         }
     };
 
@@ -1332,31 +1218,38 @@ void frei_fall()
     {
         for (y = 0; y < 4; ++y)
         {
-            if (klotzfeld[x][y].gesetzt == 1)
+            if (CurrentBrickGrid[x][y].IsSet == 1)
             {
-                spielfeld[x + klotz_x][y + klotz_y].gesetzt = 1;
-                spielfeld[x + klotz_x][y + klotz_y].typ = klotzfeld[x][y].typ;
+                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet = 1;
+                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Type = CurrentBrickGrid[x][y].Type;
             }
         }
     }
 }
 
-void drehen()
-{	//drehung nach links
-    klotz tmpfeld[4][4];
+void TryRotateCounterClockwise()
+{
+    // this SHOULD try to rotate the current brick 90° counter clockwise
+    // but its not correct:
+    // some rotations plainly dont work (for the L-Brick for instance)
+    // and the rotation axis is outside the brick in most cases, meaning it also moves left when rotating
+
+    BrickTile tmpGrid[4][4];
     unsigned int x;
     unsigned int y;
-    unsigned int drehung = 1;
+    unsigned int rotationSuccessful = 1;
 
+    // very cheap shot at rotation :D
+    // ToDo make a correct rotation calculation (vector geometry?)
     for (x = 0; x < 4; ++x)
     {
         for (y = 0; y < 4; ++y)
         {
-            tmpfeld[x][y].gesetzt = 0;
-            tmpfeld[x][y].typ = 0;
+            tmpGrid[x][y].IsSet = 0;
+            tmpGrid[x][y].Type = 0;
 
-            tmpfeld[x][y].gesetzt = klotzfeld[3 - y][x].gesetzt;
-            tmpfeld[x][y].typ = klotzfeld[3 - y][x].typ;
+            tmpGrid[x][y].IsSet = CurrentBrickGrid[3 - y][x].IsSet;
+            tmpGrid[x][y].Type = CurrentBrickGrid[3 - y][x].Type;
         }
     }
 
@@ -1364,29 +1257,29 @@ void drehen()
     {
         for (y = 0; y < 4; ++y)
         {
-            if (tmpfeld[x][y].gesetzt == 1)
+            if (tmpGrid[x][y].IsSet == 1)
             {
-                if (spielfeld[x + klotz_x][y + klotz_y].gesetzt == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet == 1)
                 {
-                    drehung = 0;
+                    rotationSuccessful = 0;
                 }
 
-                if ((x + klotz_x) > (maxx - 1))
+                if ((x + CurrentBrick_X) > (maxx - 1))
                 {
-                    drehung = 0;
+                    rotationSuccessful = 0;
                 }
             }
         }
     }
 
-    if (drehung == 1)
+    if (rotationSuccessful == 1)
     {
         for (x = 0; x < 4; ++x)
         {
             for (y = 0; y < 4; ++y)
             {
-                klotzfeld[x][y].gesetzt = tmpfeld[x][y].gesetzt;
-                klotzfeld[x][y].typ = tmpfeld[x][y].typ;
+                CurrentBrickGrid[x][y].IsSet = tmpGrid[x][y].IsSet;
+                CurrentBrickGrid[x][y].Type = tmpGrid[x][y].Type;
             }
         }
     }
@@ -1394,19 +1287,19 @@ void drehen()
 
 int main()
 {
-    /* screen und running werden später verwendet */
-
     srand(time(0));
-    Uint32 lastframe, curframe, frametime;
+    Uint32 lastFrameTimestamp;
+    Uint32 currentFrameTimestamp;
+    Uint32 frameDuration;
     Uint32 last_fall;
 
-    Uint32 linksrechtsverz = 50;
-    Uint32 last_lr;
-    Uint32 lastpause;
+    // delay between commands when a key is pressed
+    Uint32 keyPressSpamDelay = 50;
 
-    //cout << "Name?!?" << endl;
-    //cin >> name;
-    //anzeige_name = "";
+    // ToDo this should be some kind of array for each possible command
+    // this way you cannot press right directly after left, it wont be processed until keyPressSpamDelay has passed...
+    Uint32 lastKeyPressCommand;
+    Uint32 lastpause;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
@@ -1420,137 +1313,136 @@ int main()
         640,
         480,
         SDL_WINDOW_BORDERLESS,
-        &window,
-        &renderer);
+        &Window,
+        &Renderer);
 
-    SDL_RenderClear(renderer);
+    SDL_RenderClear(Renderer);
 
-    screen = SDL_CreateRGBSurface(0, 640, 480, 32,
+    Screen = SDL_CreateRGBSurface(0, 640, 480, 32,
         0x00FF0000,
         0x0000FF00,
         0x000000FF,
         0xFF000000);
 
-    screenTexture = SDL_CreateTexture(renderer,
+    ScreenTexture = SDL_CreateTexture(Renderer,
         SDL_PIXELFORMAT_ARGB8888,
         SDL_TEXTUREACCESS_STREAMING,
         640, 480);
 
-    if (!window)
+    if (!Window)
     {
         fprintf(stderr, "Konnte Bildschirmmodus nicht setzen: %s\n", SDL_GetError());
         exit(1);
     }
 
-    hintergrund = LoadBMP("images\\rand.bmp");
-    leerhintergrund = LoadBMP("images\\rand.bmp");
-    klotzquelle = LoadBMP("images\\klotz.bmp");
-    spielgrund = LoadBMP("images\\spielgrund.bmp");
-    leergrund = LoadBMP("images\\spielgrund.bmp");
-    vorschaugrund = LoadBMP("images\\vorschau.bmp");
-    vorschauleer = LoadBMP("images\\vorschau.bmp");
-    gameover = LoadBMP("images\\gameover.bmp");
-    A = LoadBMP("images\\A.BMP");
-    SDL_SetColorKey(A, SDL_TRUE, SDL_MapRGB(A->format, 0, 0, 0));
-    B = LoadBMP("images\\B.BMP");
-    SDL_SetColorKey(B, SDL_TRUE, SDL_MapRGB(B->format, 0, 0, 0));
-    C = LoadBMP("images\\C.BMP");
-    SDL_SetColorKey(C, SDL_TRUE, SDL_MapRGB(C->format, 0, 0, 0));
-    D = LoadBMP("images\\D.BMP");
-    SDL_SetColorKey(D, SDL_TRUE, SDL_MapRGB(D->format, 0, 0, 0));
-    E = LoadBMP("images\\E.BMP");
-    SDL_SetColorKey(E, SDL_TRUE, SDL_MapRGB(E->format, 0, 0, 0));
-    F = LoadBMP("images\\F.BMP");
-    SDL_SetColorKey(F, SDL_TRUE, SDL_MapRGB(F->format, 0, 0, 0));
-    G = LoadBMP("images\\G.BMP");
-    SDL_SetColorKey(G, SDL_TRUE, SDL_MapRGB(G->format, 0, 0, 0));
-    H = LoadBMP("images\\H.BMP");
-    SDL_SetColorKey(H, SDL_TRUE, SDL_MapRGB(H->format, 0, 0, 0));
-    I = LoadBMP("images\\I.BMP");
-    SDL_SetColorKey(I, SDL_TRUE, SDL_MapRGB(I->format, 0, 0, 0));
-    J = LoadBMP("images\\J.BMP");
-    SDL_SetColorKey(J, SDL_TRUE, SDL_MapRGB(J->format, 0, 0, 0));
-    K = LoadBMP("images\\K.BMP");
-    SDL_SetColorKey(K, SDL_TRUE, SDL_MapRGB(K->format, 0, 0, 0));
-    L = LoadBMP("images\\L.BMP");
-    SDL_SetColorKey(L, SDL_TRUE, SDL_MapRGB(L->format, 0, 0, 0));
-    M = LoadBMP("images\\M.BMP");
-    SDL_SetColorKey(M, SDL_TRUE, SDL_MapRGB(M->format, 0, 0, 0));
-    N = LoadBMP("images\\N.BMP");
-    SDL_SetColorKey(N, SDL_TRUE, SDL_MapRGB(N->format, 0, 0, 0));
-    O = LoadBMP("images\\O.BMP");
-    SDL_SetColorKey(O, SDL_TRUE, SDL_MapRGB(O->format, 0, 0, 0));
-    P = LoadBMP("images\\P.BMP");
-    SDL_SetColorKey(P, SDL_TRUE, SDL_MapRGB(P->format, 0, 0, 0));
-    Q = LoadBMP("images\\Q.BMP");
-    SDL_SetColorKey(Q, SDL_TRUE, SDL_MapRGB(Q->format, 0, 0, 0));
-    R = LoadBMP("images\\R.BMP");
-    SDL_SetColorKey(R, SDL_TRUE, SDL_MapRGB(R->format, 0, 0, 0));
-    S = LoadBMP("images\\S.BMP");
-    SDL_SetColorKey(S, SDL_TRUE, SDL_MapRGB(S->format, 0, 0, 0));
-    T = LoadBMP("images\\T.BMP");
-    SDL_SetColorKey(T, SDL_TRUE, SDL_MapRGB(T->format, 0, 0, 0));
-    U = LoadBMP("images\\U.BMP");
-    SDL_SetColorKey(U, SDL_TRUE, SDL_MapRGB(U->format, 0, 0, 0));
-    V = LoadBMP("images\\V.BMP");
-    SDL_SetColorKey(V, SDL_TRUE, SDL_MapRGB(V->format, 0, 0, 0));
-    W = LoadBMP("images\\W.BMP");
-    SDL_SetColorKey(W, SDL_TRUE, SDL_MapRGB(W->format, 0, 0, 0));
-    X = LoadBMP("images\\X.BMP");
-    SDL_SetColorKey(X, SDL_TRUE, SDL_MapRGB(X->format, 0, 0, 0));
-    Y = LoadBMP("images\\Y.BMP");
-    SDL_SetColorKey(Y, SDL_TRUE, SDL_MapRGB(Y->format, 0, 0, 0));
-    Z = LoadBMP("images\\Z.BMP");
-    SDL_SetColorKey(Z, SDL_TRUE, SDL_MapRGB(Z->format, 0, 0, 0));
-    eins = LoadBMP("images\\1.BMP");
-    SDL_SetColorKey(eins, SDL_TRUE, SDL_MapRGB(eins->format, 0, 0, 0));
-    zwei = LoadBMP("images\\2.BMP");
-    SDL_SetColorKey(zwei, SDL_TRUE, SDL_MapRGB(zwei->format, 0, 0, 0));
-    drei = LoadBMP("images\\3.BMP");
-    SDL_SetColorKey(drei, SDL_TRUE, SDL_MapRGB(drei->format, 0, 0, 0));
-    vier = LoadBMP("images\\4.BMP");
-    SDL_SetColorKey(vier, SDL_TRUE, SDL_MapRGB(vier->format, 0, 0, 0));
-    fuenf = LoadBMP("images\\5.BMP");
-    SDL_SetColorKey(fuenf, SDL_TRUE, SDL_MapRGB(fuenf->format, 0, 0, 0));
-    sechs = LoadBMP("images\\6.BMP");
-    SDL_SetColorKey(sechs, SDL_TRUE, SDL_MapRGB(sechs->format, 0, 0, 0));
-    sieben = LoadBMP("images\\7.BMP");
-    SDL_SetColorKey(sieben, SDL_TRUE, SDL_MapRGB(sieben->format, 0, 0, 0));
-    acht = LoadBMP("images\\8.BMP");
-    SDL_SetColorKey(acht, SDL_TRUE, SDL_MapRGB(acht->format, 0, 0, 0));
-    neun = LoadBMP("images\\9.BMP");
-    SDL_SetColorKey(neun, SDL_TRUE, SDL_MapRGB(neun->format, 0, 0, 0));
-    null = LoadBMP("images\\0.BMP");
-    SDL_SetColorKey(null, SDL_TRUE, SDL_MapRGB(null->format, 0, 0, 0));
+    Background = LoadBMP("images\\rand.bmp");
+    Background_empty = LoadBMP("images\\rand.bmp");
+    BrickSource = LoadBMP("images\\klotz.bmp");
+    PlayGround = LoadBMP("images\\spielgrund.bmp");
+    PlayGround_empty = LoadBMP("images\\spielgrund.bmp");
+    PreviewGround = LoadBMP("images\\vorschau.bmp");
+    PreviewGround_empty = LoadBMP("images\\vorschau.bmp");
+    GameOver = LoadBMP("images\\gameover.bmp");
+    LetterA = LoadBMP("images\\A.BMP");
+    SDL_SetColorKey(LetterA, SDL_TRUE, SDL_MapRGB(LetterA->format, 0, 0, 0));
+    LetterB = LoadBMP("images\\B.BMP");
+    SDL_SetColorKey(LetterB, SDL_TRUE, SDL_MapRGB(LetterB->format, 0, 0, 0));
+    LetterC = LoadBMP("images\\C.BMP");
+    SDL_SetColorKey(LetterC, SDL_TRUE, SDL_MapRGB(LetterC->format, 0, 0, 0));
+    LetterD = LoadBMP("images\\D.BMP");
+    SDL_SetColorKey(LetterD, SDL_TRUE, SDL_MapRGB(LetterD->format, 0, 0, 0));
+    LetterE = LoadBMP("images\\E.BMP");
+    SDL_SetColorKey(LetterE, SDL_TRUE, SDL_MapRGB(LetterE->format, 0, 0, 0));
+    LetterF = LoadBMP("images\\F.BMP");
+    SDL_SetColorKey(LetterF, SDL_TRUE, SDL_MapRGB(LetterF->format, 0, 0, 0));
+    LetterG = LoadBMP("images\\G.BMP");
+    SDL_SetColorKey(LetterG, SDL_TRUE, SDL_MapRGB(LetterG->format, 0, 0, 0));
+    LetterH = LoadBMP("images\\H.BMP");
+    SDL_SetColorKey(LetterH, SDL_TRUE, SDL_MapRGB(LetterH->format, 0, 0, 0));
+    LetterI = LoadBMP("images\\I.BMP");
+    SDL_SetColorKey(LetterI, SDL_TRUE, SDL_MapRGB(LetterI->format, 0, 0, 0));
+    LetterJ = LoadBMP("images\\J.BMP");
+    SDL_SetColorKey(LetterJ, SDL_TRUE, SDL_MapRGB(LetterJ->format, 0, 0, 0));
+    LetterK = LoadBMP("images\\K.BMP");
+    SDL_SetColorKey(LetterK, SDL_TRUE, SDL_MapRGB(LetterK->format, 0, 0, 0));
+    LetterL = LoadBMP("images\\L.BMP");
+    SDL_SetColorKey(LetterL, SDL_TRUE, SDL_MapRGB(LetterL->format, 0, 0, 0));
+    LetterM = LoadBMP("images\\M.BMP");
+    SDL_SetColorKey(LetterM, SDL_TRUE, SDL_MapRGB(LetterM->format, 0, 0, 0));
+    LetterN = LoadBMP("images\\N.BMP");
+    SDL_SetColorKey(LetterN, SDL_TRUE, SDL_MapRGB(LetterN->format, 0, 0, 0));
+    LetterO = LoadBMP("images\\O.BMP");
+    SDL_SetColorKey(LetterO, SDL_TRUE, SDL_MapRGB(LetterO->format, 0, 0, 0));
+    LetterP = LoadBMP("images\\P.BMP");
+    SDL_SetColorKey(LetterP, SDL_TRUE, SDL_MapRGB(LetterP->format, 0, 0, 0));
+    LetterQ = LoadBMP("images\\Q.BMP");
+    SDL_SetColorKey(LetterQ, SDL_TRUE, SDL_MapRGB(LetterQ->format, 0, 0, 0));
+    LetterR = LoadBMP("images\\R.BMP");
+    SDL_SetColorKey(LetterR, SDL_TRUE, SDL_MapRGB(LetterR->format, 0, 0, 0));
+    LetterS = LoadBMP("images\\S.BMP");
+    SDL_SetColorKey(LetterS, SDL_TRUE, SDL_MapRGB(LetterS->format, 0, 0, 0));
+    LetterT = LoadBMP("images\\T.BMP");
+    SDL_SetColorKey(LetterT, SDL_TRUE, SDL_MapRGB(LetterT->format, 0, 0, 0));
+    LetterU = LoadBMP("images\\U.BMP");
+    SDL_SetColorKey(LetterU, SDL_TRUE, SDL_MapRGB(LetterU->format, 0, 0, 0));
+    LetterV = LoadBMP("images\\V.BMP");
+    SDL_SetColorKey(LetterV, SDL_TRUE, SDL_MapRGB(LetterV->format, 0, 0, 0));
+    LetterW = LoadBMP("images\\W.BMP");
+    SDL_SetColorKey(LetterW, SDL_TRUE, SDL_MapRGB(LetterW->format, 0, 0, 0));
+    LetterX = LoadBMP("images\\X.BMP");
+    SDL_SetColorKey(LetterX, SDL_TRUE, SDL_MapRGB(LetterX->format, 0, 0, 0));
+    LetterY = LoadBMP("images\\Y.BMP");
+    SDL_SetColorKey(LetterY, SDL_TRUE, SDL_MapRGB(LetterY->format, 0, 0, 0));
+    LetterZ = LoadBMP("images\\Z.BMP");
+    SDL_SetColorKey(LetterZ, SDL_TRUE, SDL_MapRGB(LetterZ->format, 0, 0, 0));
+    Digit1 = LoadBMP("images\\1.BMP");
+    SDL_SetColorKey(Digit1, SDL_TRUE, SDL_MapRGB(Digit1->format, 0, 0, 0));
+    Digit2 = LoadBMP("images\\2.BMP");
+    SDL_SetColorKey(Digit2, SDL_TRUE, SDL_MapRGB(Digit2->format, 0, 0, 0));
+    Digit3 = LoadBMP("images\\3.BMP");
+    SDL_SetColorKey(Digit3, SDL_TRUE, SDL_MapRGB(Digit3->format, 0, 0, 0));
+    Digit4 = LoadBMP("images\\4.BMP");
+    SDL_SetColorKey(Digit4, SDL_TRUE, SDL_MapRGB(Digit4->format, 0, 0, 0));
+    Digit5 = LoadBMP("images\\5.BMP");
+    SDL_SetColorKey(Digit5, SDL_TRUE, SDL_MapRGB(Digit5->format, 0, 0, 0));
+    Digit6 = LoadBMP("images\\6.BMP");
+    SDL_SetColorKey(Digit6, SDL_TRUE, SDL_MapRGB(Digit6->format, 0, 0, 0));
+    Digit7 = LoadBMP("images\\7.BMP");
+    SDL_SetColorKey(Digit7, SDL_TRUE, SDL_MapRGB(Digit7->format, 0, 0, 0));
+    Digit8 = LoadBMP("images\\8.BMP");
+    SDL_SetColorKey(Digit8, SDL_TRUE, SDL_MapRGB(Digit8->format, 0, 0, 0));
+    Digit9 = LoadBMP("images\\9.BMP");
+    SDL_SetColorKey(Digit9, SDL_TRUE, SDL_MapRGB(Digit9->format, 0, 0, 0));
+    Digit0 = LoadBMP("images\\0.BMP");
+    SDL_SetColorKey(Digit0, SDL_TRUE, SDL_MapRGB(Digit0->format, 0, 0, 0));
 
-    //SDL_SetColorKey(hintergrund, SDL_SRCCOLORKEY, g_Black);
+    InitPlayingGrid(12);
 
-    spielfeld_ini(12);		//wert erstmal irrelevant...für spätere modifikationen
+    UpdateNextBrickGrid();
 
-    steinvorschau();
+    int ende = CreateBrick();
 
-    int ende = erzeuge_stein();
-    //klotz_einbinden();
+    DrawBackground();
+    UpdateBricks();
+    SDL_RenderPresent(Renderer);
 
-    zeichne_hintergrund();
-    update_kloetze();
-    SDL_RenderPresent(renderer);
+    Running = 1;
+    currentFrameTimestamp = SDL_GetTicks();
+    last_fall = currentFrameTimestamp;
+    lastKeyPressCommand = currentFrameTimestamp;
+    lastpause = currentFrameTimestamp;
 
-    running = 1;
-    curframe = SDL_GetTicks();
-    last_fall = curframe;
-    last_lr = curframe;
-    lastpause = curframe;
+    Score = 0;
+    RowsCleared = 0;
+    RowsLetFallen = 0;
+    TotalBricksSinceStart = 0;
+    TotalBricksOnScreen = 0;
+    TotalRowsCleared = 0;
 
-    punkte = 0;
-    reihen = 0;
-    gefallene_felder = 0;
-    steine = 0;
-    steineimbild = 0;
-    abgebaut = 0;
-
-    while (running)
+    while (Running)
     {
+        // ToDo this is irritating cant we somehow unify this
+        // first loop just checkes for key down events when they occur (so holding them down does not spam the command)
         SDL_Event event;
         const Uint8* keystate;
 
@@ -1564,19 +1456,19 @@ int main()
                     {
                         case SDLK_ESCAPE:
                         {
-                            running = 0;
+                            Running = 0;
                             break;
                         }
 
                         case SDLK_RCTRL:
                         {
-                            drehen();
+                            TryRotateCounterClockwise();
                             break;
                         }
 
                         case SDLK_UP:
                         {
-                            frei_fall();
+                            LetFallToGround();
                             break;
                         }
                     }
@@ -1586,121 +1478,120 @@ int main()
 
                 case SDL_QUIT:
                 {
-                    running = 0;
+                    Running = 0;
                     break;
                 }
             }
         }
 
+        // now keystates actually check what keys are being pressed right now (regardless since when)
+        // this is so we can repeat commands when holding keys (see above, maybe somehow unify key checks in general or separate this "special mechanic" into a class
         keystate = SDL_GetKeyboardState(0);
 
         if (keystate[SDL_SCANCODE_LEFT])
         {
-            if ((last_lr + linksrechtsverz) < curframe)
+            if ((lastKeyPressCommand + keyPressSpamDelay) < currentFrameTimestamp)
             {
-                links_bewegen();
-                last_lr = curframe;
+                TryMoveLeft();
+                lastKeyPressCommand = currentFrameTimestamp;
             }
         }
 
         if (keystate[SDL_SCANCODE_RIGHT])
         {
-            if ((last_lr + linksrechtsverz) < curframe)
+            if ((lastKeyPressCommand + keyPressSpamDelay) < currentFrameTimestamp)
             {
-                rechts_bewegen();
-                last_lr = curframe;
+                TryMoveRight();
+                lastKeyPressCommand = currentFrameTimestamp;
             }
         }
 
         if (keystate[SDL_SCANCODE_DOWN])
         {
-            unten_bewegen();
+            TryMoveDown();
         }
 
         if (keystate[SDL_SCANCODE_RETURN])
         {
-            if ((lastpause + 1000) < curframe)
+            if ((lastpause + 1000) < currentFrameTimestamp)
             {
-                lastpause = curframe;
+                lastpause = currentFrameTimestamp;
 
-                if (pause == 1)
+                if (Pause == 1)
                 {
-                    last_fall = curframe;
-                    pause = 0;
+                    last_fall = currentFrameTimestamp;
+                    Pause = 0;
                 }
                 else
                 {
-                    last_fall = curframe;
-                    pause = 1;
+                    last_fall = currentFrameTimestamp;
+                    Pause = 1;
                 }
             }
         }
 
-        lastframe = curframe;
-        curframe = SDL_GetTicks();
-        frametime = curframe - lastframe;
+        lastFrameTimestamp = currentFrameTimestamp;
+        currentFrameTimestamp = SDL_GetTicks();
 
-        if (pause == 1)
+        frameDuration = currentFrameTimestamp - lastFrameTimestamp;
+
+        if (Pause == 1)
         {
-            last_fall = curframe;
+            last_fall = currentFrameTimestamp;
         }
 
-        fallen_lassen(last_fall, curframe);
+        AdjustBrickFallSpeedToFrameRate(last_fall, currentFrameTimestamp);
 
-        zeichne_hintergrund();
-        update_kloetze();
-        SDL_RenderPresent(renderer);
+        DrawBackground();
+        UpdateBricks();
+        SDL_RenderPresent(Renderer);
     }
 
-    SDL_FreeSurface(hintergrund);
-    SDL_FreeSurface(leerhintergrund);
-    SDL_FreeSurface(klotzquelle);
-    SDL_FreeSurface(spielgrund);
-    SDL_FreeSurface(leergrund);
-    SDL_FreeSurface(gameover);
-    SDL_FreeSurface(vorschaugrund);
-    SDL_FreeSurface(vorschauleer);
-    SDL_FreeSurface(A);
-    SDL_FreeSurface(B);
-    SDL_FreeSurface(C);
-    SDL_FreeSurface(D);
-    SDL_FreeSurface(E);
-    SDL_FreeSurface(F);
-    SDL_FreeSurface(G);
-    SDL_FreeSurface(H);
-    SDL_FreeSurface(I);
-    SDL_FreeSurface(J);
-    SDL_FreeSurface(K);
-    SDL_FreeSurface(L);
-    SDL_FreeSurface(M);
-    SDL_FreeSurface(N);
-    SDL_FreeSurface(O);
-    SDL_FreeSurface(P);
-    SDL_FreeSurface(Q);
-    SDL_FreeSurface(R);
-    SDL_FreeSurface(S);
-    SDL_FreeSurface(T);
-    SDL_FreeSurface(U);
-    SDL_FreeSurface(V);
-    SDL_FreeSurface(W);
-    SDL_FreeSurface(X);
-    SDL_FreeSurface(Y);
-    SDL_FreeSurface(Z);
+    SDL_FreeSurface(Background);
+    SDL_FreeSurface(Background_empty);
+    SDL_FreeSurface(BrickSource);
+    SDL_FreeSurface(PlayGround);
+    SDL_FreeSurface(PlayGround_empty);
+    SDL_FreeSurface(GameOver);
+    SDL_FreeSurface(PreviewGround);
+    SDL_FreeSurface(PreviewGround_empty);
+    SDL_FreeSurface(LetterA);
+    SDL_FreeSurface(LetterB);
+    SDL_FreeSurface(LetterC);
+    SDL_FreeSurface(LetterD);
+    SDL_FreeSurface(LetterE);
+    SDL_FreeSurface(LetterF);
+    SDL_FreeSurface(LetterG);
+    SDL_FreeSurface(LetterH);
+    SDL_FreeSurface(LetterI);
+    SDL_FreeSurface(LetterJ);
+    SDL_FreeSurface(LetterK);
+    SDL_FreeSurface(LetterL);
+    SDL_FreeSurface(LetterM);
+    SDL_FreeSurface(LetterN);
+    SDL_FreeSurface(LetterO);
+    SDL_FreeSurface(LetterP);
+    SDL_FreeSurface(LetterQ);
+    SDL_FreeSurface(LetterR);
+    SDL_FreeSurface(LetterS);
+    SDL_FreeSurface(LetterT);
+    SDL_FreeSurface(LetterU);
+    SDL_FreeSurface(LetterV);
+    SDL_FreeSurface(LetterW);
+    SDL_FreeSurface(LetterX);
+    SDL_FreeSurface(LetterY);
+    SDL_FreeSurface(LetterZ);
 
-    SDL_FreeSurface(null);
-    SDL_FreeSurface(eins);
-    SDL_FreeSurface(zwei);
-    SDL_FreeSurface(drei);
-    SDL_FreeSurface(vier);
-    SDL_FreeSurface(fuenf);
-    SDL_FreeSurface(sechs);
-    SDL_FreeSurface(sieben);
-    SDL_FreeSurface(acht);
-    SDL_FreeSurface(neun);
-
-    //ofstream highscore("highscore.txt", ios::app | ios::binary);
-    //highscore << punkte << " " << name << " " << abgebaut << " " << steine << endl;
-    //highscore.close();
+    SDL_FreeSurface(Digit0);
+    SDL_FreeSurface(Digit1);
+    SDL_FreeSurface(Digit2);
+    SDL_FreeSurface(Digit3);
+    SDL_FreeSurface(Digit4);
+    SDL_FreeSurface(Digit5);
+    SDL_FreeSurface(Digit6);
+    SDL_FreeSurface(Digit7);
+    SDL_FreeSurface(Digit8);
+    SDL_FreeSurface(Digit9);
 
     return 0;
 }
