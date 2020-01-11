@@ -13,10 +13,35 @@ using namespace std;
 #undef main
 #endif
 
+
+/*
+playing grid is 18 x 24
+
+but the bottom row (index 25)
+is invisible (but needed for collision detection)
+*/
+#define maxx 18
+#define maxy 25
+
+class BrickTile
+{
+    public:
+    bool IsSet;
+
+    // source bitmap is 640x480 => when tiling 20x20 => 307200/(20*20) => 768 tiles (i.e. types)
+    int Type;
+
+    void Set(bool brickState, int brickType)
+    {
+        this->IsSet = brickState;
+        this->Type = brickType;
+    }
+};
+
 // make method signature known
 void UpdateBricks();
 
-int Running;
+bool GameRunning;
 
 SDL_Surface* Screen;
 SDL_Texture* ScreenTexture;
@@ -81,146 +106,31 @@ unsigned long RowsLetFallen;
 unsigned long RowsCleared;
 
 unsigned long TotalBricksSinceStart;
-unsigned long TotalBricksOnScreen;
+unsigned long TotalTilesOnScreen;
 unsigned long TotalRowsCleared;
 unsigned long LastLevelRowsCleared = 0;
 
 unsigned int Level = 1;
-unsigned int Pause = 0;
+bool GamePaused = false;
 
-void RenderNumber(SDL_Surface* surface, unsigned int startx, unsigned int starty, unsigned long number)
-{
-    SDL_Rect targetArea;
+bool CollapseClearedRows = true;
 
-    targetArea.x = startx;
-    targetArea.y = starty;
+BrickTile CurrentBrickGrid[4][4];
+BrickTile NextBrickGrid[4][4];
+BrickTile PlayingGrid[maxx][maxy];
 
-    unsigned long tmpNumber = number;
+// top left corner of current brick grid in relation to playing grid
+unsigned int CurrentBrick_X;
+unsigned int CurrentBrick_Y;
 
-    unsigned long digit;
-    unsigned long rest = 1;
+// this means, if not for user pressing down or up, this will be the time the brick stays on one row before falling "one step" down
+// in milliseconds
+unsigned int BrickFallDelay_ms = 500;
+unsigned int NextBrickType = 1;
 
-    // max score ~ 4.5 * 10^9, so we start by moduloing 10^9
-    unsigned long divisor = 1000000000;
-
-    SDL_Surface* tmp = Digit0;
-
-    int	leadingZero = 1;
-    int doNothing = 0;
-
-    while (divisor > 0)
-    {
-        digit = tmpNumber / divisor;
-        rest = tmpNumber % divisor;
-
-        divisor = divisor / 10;
-        tmpNumber = rest;
-
-        //jetzt den quotienten auf die surface bringen
-        switch (digit)
-        {
-            case 0:
-            {
-                if (leadingZero == 0)
-                {
-                    tmp = Digit0;
-                }
-                else
-                {
-                    if (rest == 0)
-                    {
-                        tmp = Digit0;
-                    }
-                    else
-                    {
-                        doNothing = 1;
-                    }
-                }
-
-                break;
-            }
-
-            case 1:
-            {
-                tmp = Digit1;
-                break;
-            }
-
-            case 2:
-            {
-                tmp = Digit2;
-                break;
-            }
-
-            case 3:
-            {
-                tmp = Digit3;
-                break;
-            }
-
-            case 4:
-            {
-                tmp = Digit4;
-                break;
-            }
-
-            case 5:
-            {
-                tmp = Digit5;
-                break;
-            }
-
-            case 6:
-            {
-                tmp = Digit6;
-                break;
-            }
-
-            case 7:
-            {
-                tmp = Digit7;
-                break;
-            }
-
-            case 8:
-            {
-                tmp = Digit8;
-                break;
-            }
-
-            case 9:
-            {
-                tmp = Digit9;
-                break;
-            }
-
-            default:
-            {
-                break;
-            }
-
-        };	//switch
-
-        if (doNothing == 0)
-        {
-            leadingZero = 0;
-            targetArea.h = tmp->h;
-            targetArea.w = tmp->w;
-
-            SDL_BlitSurface(tmp, 0, surface, &targetArea);
-
-            targetArea.x += targetArea.h;
-        }
-        else
-        {
-            doNothing = 0;
-        };
-    };	//while
-};
-
+// draws text using bitmap font, currently only upper case letters A-Z and 0-9
 void RenderText(SDL_Surface* surface, unsigned int startx, unsigned int starty, string text)
 {
-    SDL_Rect sourceArea;
     SDL_Rect targetArea;
 
     targetArea.x = startx;
@@ -458,7 +368,6 @@ void RenderText(SDL_Surface* surface, unsigned int startx, unsigned int starty, 
         SDL_BlitSurface(TmpSurface, 0, surface, &targetArea);
 
         targetArea.x += targetArea.h;
-        //target.y	+=target.w;
     };
 
     // only partial update here? shouldnt this behave similarly to outzahlxy?
@@ -489,65 +398,24 @@ SDL_Surface* LoadBMP(const char* szFile)
     return convertedPixelFormatBmp;
 }
 
-/*
-playing grid is 18 x 24
-
-but the bottom row (index 25)
-is invisible (but needed for collision detection)
-*/
-#define maxx	18
-#define maxy	25
-
-class BrickTile
-{
-    public:
-    int IsSet;
-
-    // source bitmap is 640x480 => when tiling 20x20 => 307200/(20*20) => 768 tiles (i.e. types)
-    int Type;
-};
-
-unsigned int CollapseClearedRows = 1;
-
-BrickTile CurrentBrickGrid[4][4];
-BrickTile NextBrickGrid[4][4];
-BrickTile PlayingGrid[maxx][maxy];
-
-// top left corner of current brick grid in relation to playing grid
-unsigned int CurrentBrick_X;
-unsigned int CurrentBrick_Y;
-
-// this means, if not for user pressing down or up, this will be the time the brick stays on one row before falling "one step" down
-// in milliseconds
-unsigned int BrickFallDelay_ms = 500;
-unsigned int NextBrickType = 1;
-
 void ClearCurrentBrickGrid()
 {
-    unsigned int x;
-    unsigned int y;
-
-    for (x = 0; x < 4; ++x)
+    for (unsigned int x = 0; x < 4; ++x)
     {
-        for (y = 0; y < 4; ++y)
+        for (unsigned int y = 0; y < 4; ++y)
         {
-            CurrentBrickGrid[x][y].IsSet = 0;
-            CurrentBrickGrid[x][y].Type = 0;
+            CurrentBrickGrid[x][y].Set(false, 0);
         }
     }
 }
 
 void ClearNextBrickGrid()
 {
-    unsigned int x;
-    unsigned int y;
-
-    for (x = 0; x < 4; ++x)
+    for (unsigned int x = 0; x < 4; ++x)
     {
-        for (y = 0; y < 4; ++y)
+        for (unsigned int y = 0; y < 4; ++y)
         {
-            NextBrickGrid[x][y].IsSet = 0;
-            NextBrickGrid[x][y].Type = 0;
+            NextBrickGrid[x][y].Set(false, 0);
         }
     }
 }
@@ -561,57 +429,50 @@ void NextLevel()
 // max should define the max number of BrickTiles at game start (not used right now)
 void InitPlayingGrid(unsigned int max)
 {
-    unsigned int x;
-    unsigned int y;
-
-    for (x = 0; x < maxx; ++x)
+    for (unsigned int x = 0; x < maxx; ++x)
     {
-        for (y = 0; y < (maxy - 1); ++y)
+        for (unsigned int y = 0; y < (maxy - 1); ++y)
         {
-            PlayingGrid[x][y].IsSet = 0;
-            PlayingGrid[x][y].Type = 0;
-
-            PlayingGrid[x][maxy - 1].IsSet = 1;
-            PlayingGrid[x][maxy - 1].Type = 1;
+            PlayingGrid[x][y].Set(false, 0);
+            PlayingGrid[x][maxy - 1].Set(true, 1);
         }
     }
 
     ClearCurrentBrickGrid();
 }
 
-
 void ClearRowsIfPossible()
 {
     unsigned int x;
     unsigned int y;
     unsigned int y1;
-    int	rowComplete = 0;
+    bool rowComplete = false;
 
     for (y = 0; y < (maxy - 1); ++y)
     {
-        if (PlayingGrid[0][y].IsSet == 1)
+        if (PlayingGrid[0][y].IsSet)
         {
-            rowComplete = 1;
+            rowComplete = true;
             for (x = 1; x < maxx; ++x)
             {
-                if (PlayingGrid[x][y].IsSet == 0)
+                if (!PlayingGrid[x][y].IsSet)
                 {
-                    rowComplete = 0;
+                    rowComplete = false;
                     //cout<<"row not complete x"<<x<<" y"<<y<<endl;
                     break;
                 }
             }
 
-            if (rowComplete == 1)
+            if (rowComplete)
             {
                 RowsCleared += 1;
 
                 for (x = 0; x < maxx; ++x)
                 {
-                    PlayingGrid[x][y].IsSet = 0;
+                    PlayingGrid[x][y].IsSet = false;
                 }
 
-                TotalBricksOnScreen -= maxx;
+                TotalTilesOnScreen -= maxx;
                 TotalRowsCleared++;
                 //cout<<"row y="<<y<<" cleared"<<endl;
 
@@ -619,14 +480,13 @@ void ClearRowsIfPossible()
 
                 SDL_RenderPresent(Renderer);
 
-                if (CollapseClearedRows == 1)
+                if (CollapseClearedRows)
                 {
                     for (x = 0; x < maxx; ++x)
                     {
                         for (y1 = y; y1 > 0; --y1)
                         {
-                            PlayingGrid[x][y1].IsSet = PlayingGrid[x][y1 - 1].IsSet;
-                            PlayingGrid[x][y1].Type = PlayingGrid[x][y1 - 1].Type;
+                            PlayingGrid[x][y1].Set(PlayingGrid[x][y1 - 1].IsSet, PlayingGrid[x][y1 - 1].Type);
                         }
                     }
 
@@ -684,7 +544,7 @@ void DrawGameOverAndQuit()
 
     SDL_Delay(3000);
 
-    Running = 0;
+    GameRunning = false;
 }
 
 void UpdateNextBrickGrid()
@@ -699,14 +559,10 @@ oo
 */
         case 0:
         {
-            NextBrickGrid[1][0].IsSet = 1;
-            NextBrickGrid[1][0].Type = rand() % 768 + 1;
-            NextBrickGrid[1][1].IsSet = 1;
-            NextBrickGrid[1][1].Type = rand() % 768 + 1;
-            NextBrickGrid[2][0].IsSet = 1;
-            NextBrickGrid[2][0].Type = rand() % 768 + 1;
-            NextBrickGrid[2][1].IsSet = 1;
-            NextBrickGrid[2][1].Type = rand() % 768 + 1;
+            NextBrickGrid[1][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][1].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][1].Set(true, rand() % 768 + 1);
 
             break;
         }
@@ -715,14 +571,10 @@ oooo
 */
         case 1:
         {
-            NextBrickGrid[0][0].IsSet = 1;
-            NextBrickGrid[0][0].Type = rand() % 768 + 1;
-            NextBrickGrid[1][0].IsSet = 1;
-            NextBrickGrid[1][0].Type = rand() % 768 + 1;
-            NextBrickGrid[2][0].IsSet = 1;
-            NextBrickGrid[2][0].Type = rand() % 768 + 1;
-            NextBrickGrid[3][0].IsSet = 1;
-            NextBrickGrid[3][0].Type = rand() % 768 + 1;
+            NextBrickGrid[0][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[3][0].Set(true, rand() % 768 + 1);
 
             break;
         }
@@ -732,14 +584,10 @@ o
 */
         case 2:
         {
-            NextBrickGrid[0][0].IsSet = 1;
-            NextBrickGrid[0][0].Type = rand() % 768 + 1;
-            NextBrickGrid[1][0].IsSet = 1;
-            NextBrickGrid[1][0].Type = rand() % 768 + 1;
-            NextBrickGrid[2][0].IsSet = 1;
-            NextBrickGrid[2][0].Type = rand() % 768 + 1;
-            NextBrickGrid[0][1].IsSet = 1;
-            NextBrickGrid[0][1].Type = rand() % 768 + 1;
+            NextBrickGrid[0][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[0][1].Set(true, rand() % 768 + 1);
 
             break;
         }
@@ -749,14 +597,10 @@ ooo
 */
         case 3:
         {
-            NextBrickGrid[0][0].IsSet = 1;
-            NextBrickGrid[0][0].Type = rand() % 768 + 1;
-            NextBrickGrid[1][0].IsSet = 1;
-            NextBrickGrid[1][0].Type = rand() % 768 + 1;
-            NextBrickGrid[2][0].IsSet = 1;
-            NextBrickGrid[2][0].Type = rand() % 768 + 1;
-            NextBrickGrid[1][1].IsSet = 1;
-            NextBrickGrid[1][1].Type = rand() % 768 + 1;
+            NextBrickGrid[0][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][1].Set(true, rand() % 768 + 1);
 
             break;
         }
@@ -766,14 +610,10 @@ ooo
 */
         case 4:
         {
-            NextBrickGrid[0][0].IsSet = 1;
-            NextBrickGrid[0][0].Type = rand() % 768 + 1;
-            NextBrickGrid[0][1].IsSet = 1;
-            NextBrickGrid[0][1].Type = rand() % 768 + 1;
-            NextBrickGrid[1][1].IsSet = 1;
-            NextBrickGrid[1][1].Type = rand() % 768 + 1;
-            NextBrickGrid[2][1].IsSet = 1;
-            NextBrickGrid[2][1].Type = rand() % 768 + 1;
+            NextBrickGrid[0][0].Set(true, rand() % 768 + 1);
+            NextBrickGrid[0][1].Set(true, rand() % 768 + 1);
+            NextBrickGrid[1][1].Set(true, rand() % 768 + 1);
+            NextBrickGrid[2][1].Set(true, rand() % 768 + 1);
         }
 /*
 (currently inactive)
@@ -793,9 +633,9 @@ any tile in 4x4 COULD be set.
                     if (counter == 0) {}
                     else
                     {
-                        NextBrickGrid[x][y].IsSet = rand() % 2;
-                        NextBrickGrid[x][y].Type = rand() % 768 + 1;
-
+                        NextBrickGrid[x][y].Set(
+                            (rand() % 2) == 1 ? true : false,
+                            rand() % 768 + 1);
                         --counter;
                     }
                 }
@@ -814,8 +654,9 @@ any tile in 4x4 COULD be set.
             {
                 for (unsigned int y = 0; y < 4; ++y)
                 {
-                    NextBrickGrid[x][y].IsSet = rand() % 2;	//either 0 or 1
-                    NextBrickGrid[x][y].Type = rand() % 768 + 1;
+                    NextBrickGrid[x][y].Set(
+                        (rand() % 2) == 1 ? true : false,
+                        rand() % 768 + 1);
                 }
             }
         }
@@ -824,8 +665,6 @@ any tile in 4x4 COULD be set.
 
 unsigned long Pot(unsigned int base, unsigned int exp)
 {
-    unsigned int tmp = base;
-
     if (exp == 0)
     {
         return 1;
@@ -845,7 +684,9 @@ void UpdateScore()
     RowsCleared = 0;
 };
 
-int CreateBrick()
+// returns true if this brick can fall
+// returns false if brick leads to gameover
+bool CreateBrick()
 {
     ClearRowsIfPossible();
     ClearCurrentBrickGrid();
@@ -854,33 +695,33 @@ int CreateBrick()
 
     NextBrickType = rand() % 4;
 
-    unsigned int x, y;
-    for (x = 0; x < 4; ++x)
+    for (unsigned int x = 0; x < 4; ++x)
     {
-        for (y = 0; y < 4; ++y)
+        for (unsigned int y = 0; y < 4; ++y)
         {
             CurrentBrickGrid[x][y] = NextBrickGrid[x][y];
 
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
-                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet)
                 {
-                    return 1;
+                    return false;
                 }
 
-                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet)
                 {
-                    return 1;
+                    return false;
                 }
             }
         }
     }
 
     UpdateNextBrickGrid();
-    TotalBricksOnScreen += 4;
+    TotalTilesOnScreen += 4;
     TotalBricksSinceStart++;
     RowsLetFallen = 0;
-    return 0;
+
+    return true;
 }
 
 // returns 0 if there is no space between currently falling brick and ground/bricks lying on the ground
@@ -888,31 +729,29 @@ int CreateBrick()
 // returns 1 if threre is any space at all between them
 unsigned int CurrentBrickDistanceToGround()
 {
-    unsigned int neu = 0;
-
     for (unsigned int x = 0; x < 4; x++)
+    {
         for (unsigned int y = 0; y < 4; y++)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
-                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet)
                 {
                     for (x = 0; x < 4; ++x)
                     {
                         for (y = 0; y < 4; ++y)
                         {
-                            if (CurrentBrickGrid[x][y].IsSet == 1)
+                            if (CurrentBrickGrid[x][y].IsSet)
                             {
-                                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet = 1;
-                                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Type = CurrentBrickGrid[x][y].Type;
+                                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Set(1, CurrentBrickGrid[x][y].Type);
                             }
                         }
                     }
 
                     UpdateScore();
 
-                    int zuende = CreateBrick();
-                    if (zuende == 1)
+                    GameRunning = CreateBrick();
+                    if (!GameRunning)
                     {
                         DrawGameOverAndQuit();
                     }
@@ -921,6 +760,7 @@ unsigned int CurrentBrickDistanceToGround()
                 }
             }
         }
+    }
 
     return 1;
 }
@@ -964,7 +804,7 @@ void UpdateBricks()
     {
         for (y = 0; y < (maxy - 1); ++y)
         {
-            if (PlayingGrid[x][y].IsSet == 1)
+            if (PlayingGrid[x][y].IsSet)
             {
                 tmpType = PlayingGrid[x][y].Type;
                 sourceArea.x = ((tmpType - 1) % 32) * 20;
@@ -983,7 +823,7 @@ void UpdateBricks()
     {
         for (y = 0; y < 4; ++y)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
                 tmpType = CurrentBrickGrid[x][y].Type;
                 sourceArea.x = ((tmpType - 1) % 32) * 20;
@@ -1031,11 +871,18 @@ void DrawBackground()
     targetArea.y = 0;
 
     SDL_BlitSurface(Background_empty, &sourceArea, Background, &targetArea);
-    RenderNumber(Background, 0, 340, TotalBricksSinceStart);
-    RenderNumber(Background, 0, 380, TotalBricksOnScreen);
-    RenderNumber(Background, 0, 420, Level);
-    RenderNumber(Background, 0, 460, TotalRowsCleared);
-    RenderNumber(Background, 0, 300, Score);
+
+    RenderText(Background, 0, 165, "SCORE");
+    RenderText(Background, 0, 190, to_string(Score));
+    RenderText(Background, 0, 215, "LEVEL");
+    RenderText(Background, 0, 240, to_string(Level));
+
+    RenderText(Background, 0, 315, "BRICKS");
+    RenderText(Background, 0, 340, to_string(TotalBricksSinceStart));
+    RenderText(Background, 0, 365, "TILES");
+    RenderText(Background, 0, 390, to_string(TotalTilesOnScreen));
+    RenderText(Background, 0, 415, "CLEARED");
+    RenderText(Background, 0, 440, to_string(TotalRowsCleared));
     SDL_BlitSurface(Background, &sourceArea, Screen, &targetArea);
 
     // next brick preview on the left
@@ -1059,7 +906,7 @@ void DrawBackground()
     {
         for (unsigned int y = 0; y < 4; ++y)
         {
-            if (NextBrickGrid[x][y].IsSet == 1)
+            if (NextBrickGrid[x][y].IsSet)
             {
                 tmpType = NextBrickGrid[x][y].Type;
                 sourceArea.x = ((tmpType - 1) % 32) * 20;
@@ -1104,30 +951,30 @@ void DrawBackground()
 // try to move one field left
 void TryMoveLeft()
 {
-    int isOccupied = 0;
+    bool isOccupied = false;
 
     for (unsigned int x = 0; x < 4; ++x)
     {
         for (unsigned int y = 0; y < 4; ++y)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
                 // cant move anymore to the left than index 0
                 if ((x + CurrentBrick_X) == 0)
                 {
-                    isOccupied = 1;
+                    isOccupied = true;
                 }
 
                 // cant move anymore to the left if that index is occupied by something else
-                if (PlayingGrid[x + CurrentBrick_X - 1][y + CurrentBrick_Y].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X - 1][y + CurrentBrick_Y].IsSet)
                 {
-                    isOccupied = 1;
+                    isOccupied = true;
                 }
             }
         }
     }
 
-    if (isOccupied == 0)
+    if (!isOccupied)
     {
         --CurrentBrick_X;
     }
@@ -1136,30 +983,30 @@ void TryMoveLeft()
 // try to move one field right
 void TryMoveRight()
 {
-    int isOccupied = 0;
+    bool isOccupied = false;
 
     for (unsigned int x = 0; x < 4; ++x)
     {
         for (unsigned int y = 0; y < 4; ++y)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
                 // cant move anymore to the right than index (max - 1)
                 if ((x + CurrentBrick_X) == (maxx - 1))
                 {
-                    isOccupied = 1;
+                    isOccupied = true;
                 }
 
                 // cant move anymore to the left if that index is occupied by something else
-                if (PlayingGrid[x + CurrentBrick_X + 1][y + CurrentBrick_Y].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X + 1][y + CurrentBrick_Y].IsSet)
                 {
-                    isOccupied = 1;
+                    isOccupied = true;
                 }
             }
         }
     }
 
-    if (isOccupied == 0)
+    if (!isOccupied)
     {
         ++CurrentBrick_X;
     }
@@ -1168,29 +1015,29 @@ void TryMoveRight()
 // try to move one field down
 void TryMoveDown()
 {
-    int IsOccupied = 0;
+    bool IsOccupied = false;
 
     for (unsigned int x = 0; x < 4; ++x)
     {
         for (unsigned int y = 0; y < 4; ++y)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
-                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet)
                 {
-                    IsOccupied = 1;
+                    IsOccupied = true;
                 }
             }
         }
     }
 
-    if (IsOccupied == 0) ++CurrentBrick_Y;
+    if (!IsOccupied) ++CurrentBrick_Y;
 }
 
 // brick is to move from current position to the lowest possible (the ground)
 void LetFallToGround()
 {
-    unsigned int groundHit = 0;
+    bool groundHit = false;
     unsigned int x;
     unsigned int y;
 
@@ -1199,16 +1046,16 @@ void LetFallToGround()
         for (x = 0; x < 4; ++x)
             for (y = 0; y < 4; ++y)
             {
-                if (CurrentBrickGrid[x][y].IsSet == 1)
+                if (CurrentBrickGrid[x][y].IsSet)
                 {
-                    if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet == 1)
+                    if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y + 1].IsSet)
                     {
-                        groundHit = 1;
+                        groundHit = true;
                     }
                 }
             }
 
-        if (groundHit != 1)
+        if (!groundHit)
         {
             ++CurrentBrick_Y;
         }
@@ -1218,10 +1065,9 @@ void LetFallToGround()
     {
         for (y = 0; y < 4; ++y)
         {
-            if (CurrentBrickGrid[x][y].IsSet == 1)
+            if (CurrentBrickGrid[x][y].IsSet)
             {
-                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet = 1;
-                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Type = CurrentBrickGrid[x][y].Type;
+                PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].Set(1, CurrentBrickGrid[x][y].Type);
             }
         }
     }
@@ -1234,10 +1080,10 @@ void TryRotateCounterClockwise()
     // some rotations plainly dont work (for the L-Brick for instance)
     // and the rotation axis is outside the brick in most cases, meaning it also moves left when rotating
 
+    bool canRotate = true;
     BrickTile tmpGrid[4][4];
     unsigned int x;
     unsigned int y;
-    unsigned int rotationSuccessful = 1;
 
     // very cheap shot at rotation :D
     // ToDo make a correct rotation calculation (vector geometry?)
@@ -1245,7 +1091,7 @@ void TryRotateCounterClockwise()
     {
         for (y = 0; y < 4; ++y)
         {
-            tmpGrid[x][y].IsSet = 0;
+            tmpGrid[x][y].IsSet = false;
             tmpGrid[x][y].Type = 0;
 
             tmpGrid[x][y].IsSet = CurrentBrickGrid[3 - y][x].IsSet;
@@ -1257,22 +1103,22 @@ void TryRotateCounterClockwise()
     {
         for (y = 0; y < 4; ++y)
         {
-            if (tmpGrid[x][y].IsSet == 1)
+            if (tmpGrid[x][y].IsSet)
             {
-                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet == 1)
+                if (PlayingGrid[x + CurrentBrick_X][y + CurrentBrick_Y].IsSet)
                 {
-                    rotationSuccessful = 0;
+                    canRotate = false;
                 }
 
                 if ((x + CurrentBrick_X) > (maxx - 1))
                 {
-                    rotationSuccessful = 0;
+                    canRotate = false;
                 }
             }
         }
     }
 
-    if (rotationSuccessful == 1)
+    if (canRotate)
     {
         for (x = 0; x < 4; ++x)
         {
@@ -1420,13 +1266,13 @@ int main()
 
     UpdateNextBrickGrid();
 
-    int ende = CreateBrick();
+    GameRunning = CreateBrick();
 
     DrawBackground();
     UpdateBricks();
     SDL_RenderPresent(Renderer);
 
-    Running = 1;
+    GameRunning = true;
     currentFrameTimestamp = SDL_GetTicks();
     last_fall = currentFrameTimestamp;
     lastKeyPressCommand = currentFrameTimestamp;
@@ -1436,10 +1282,10 @@ int main()
     RowsCleared = 0;
     RowsLetFallen = 0;
     TotalBricksSinceStart = 0;
-    TotalBricksOnScreen = 0;
+    TotalTilesOnScreen = 0;
     TotalRowsCleared = 0;
 
-    while (Running)
+    while (GameRunning)
     {
         // ToDo this is irritating cant we somehow unify this
         // first loop just checkes for key down events when they occur (so holding them down does not spam the command)
@@ -1456,7 +1302,7 @@ int main()
                     {
                         case SDLK_ESCAPE:
                         {
-                            Running = 0;
+                            GameRunning = false;
                             break;
                         }
 
@@ -1478,7 +1324,7 @@ int main()
 
                 case SDL_QUIT:
                 {
-                    Running = 0;
+                    GameRunning = false;
                     break;
                 }
             }
@@ -1517,15 +1363,15 @@ int main()
             {
                 lastpause = currentFrameTimestamp;
 
-                if (Pause == 1)
+                if (GamePaused)
                 {
                     last_fall = currentFrameTimestamp;
-                    Pause = 0;
+                    GamePaused = false;
                 }
                 else
                 {
                     last_fall = currentFrameTimestamp;
-                    Pause = 1;
+                    GamePaused = true;
                 }
             }
         }
@@ -1535,7 +1381,7 @@ int main()
 
         frameDuration = currentFrameTimestamp - lastFrameTimestamp;
 
-        if (Pause == 1)
+        if (GamePaused)
         {
             last_fall = currentFrameTimestamp;
         }
